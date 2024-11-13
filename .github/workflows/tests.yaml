@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: windows-latest
-        python-version: 3.12-dev
+        os: [windows-latest]
+        python-version: [3.12-dev]
 
     name: Test
     runs-on: ${{ matrix.os }}
