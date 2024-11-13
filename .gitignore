@@ -1,1 +1,4 @@
 # ignore the Notification_Sender class
+/Service_Layer/Notification_Sender.py
+/.vscode
+/Tests/__pycache__
