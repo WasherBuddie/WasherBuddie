@@ -26,7 +26,7 @@ class Machine_Manager:
 		if type(machine) != Machine or type(user) != User:
 			raise TypeError()
 		
-		machine.update_state(value=("In Use", user))
+		machine.current_state = ("In Use", user)
   
 		while True:
 			now = datetime.datetime.now()
@@ -54,7 +54,7 @@ class Machine_Manager:
 		if type(machine) != Machine or type(user) != User:
 			raise TypeError()
 
-		machine.update_state(value=('Available', user))
+		machine.current_state = ('Available', user)
 		return True
 		
 	def set_out_of_order(self, machine, status, user):
@@ -76,7 +76,7 @@ class Machine_Manager:
 		if not user.is_admin:
 			raise PermissionError()
 
-		machine.update_state(value=(status, user))
+		machine.current_state = (status, user)
 		return True
 
 	def get_status(self, machine):
