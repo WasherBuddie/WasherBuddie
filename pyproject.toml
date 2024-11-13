@@ -35,7 +35,7 @@ test = [
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --cov=Service_Layer"
-testpaths = ["tests"]
+testpaths = ["Tests"]
 
 [tool.coverage.run]
 source = ["Service_Layer"]
