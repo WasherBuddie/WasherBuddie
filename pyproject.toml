@@ -1,0 +1,60 @@
+[
+build-system
+]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[
+project
+]
+name = "washerbuddie"
+version = "0.1.0"
+description = "A laundry management system for tracking washer and dryer usage"
+readme = "README.md"
+authors = [
+    { name = "Nick", email = "washerbuddie@gmail.com" },
+]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["laundry", "management", "washer", "dryer"]
+dependencies = [
+    "python-dateutil>=2.8.2",
+]
+
+[
+project.optional-dependencies
+]
+test = [
+    "pytest>=7.4.3",
+    "pytest-cov>=4.1.0",
+]
+
+[
+tool.pytest.ini_options
+]
+minversion = "7.0"
+addopts = "-ra -q --cov=Service_Layer"
+testpaths = [
+    "tests",
+]
+
+[
+tool.coverage.run
+]
+source = ["Service_Layer"]
+branch = true
+
+[
+tool.coverage.report
+]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
