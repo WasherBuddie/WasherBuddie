@@ -1,6 +1,6 @@
-from User import User
-from Notification_Sender import Notification_Sender
-from Machine import Machine
+from Service_Layer.User import User
+from Service_Layer.Notification_Sender import Notification_Sender
+from Service_Layer.Machine import Machine
 
 class Notification_Manager:
     """
