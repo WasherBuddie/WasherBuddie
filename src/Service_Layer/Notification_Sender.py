@@ -1,8 +1,8 @@
 import smtplib
 from email.mime.text import MIMEText
-from Service_Layer.User import User
-from Service_Layer.Notification import Notification
-from Service_Layer.Machine import Machine
+from src.Service_Layer.User import User
+from src.Service_Layer.Notification import Notification
+from src.Service_Layer.Machine import Machine
 
 class Notification_Sender:
 	

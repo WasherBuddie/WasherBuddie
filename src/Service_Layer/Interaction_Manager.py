@@ -1,6 +1,6 @@
-from Service_Layer.Machine import Machine
-from Service_Layer.User import User
-from Service_Layer.Notification_Manager import Notification_Manager
+from src.Service_Layer.Machine import Machine
+from src.Service_Layer.User import User
+from src.Service_Layer.Notification_Manager import Notification_Manager
 
 class Interaction_Manager:
     def add_washer(self):
