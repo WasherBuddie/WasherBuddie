@@ -1,5 +1,5 @@
 import unittest
-from Service_Layer.Notification import Notification
+from src.Service_Layer.Notification import Notification
 class TestNotification(unittest.TestCase):
 
     def setUp(self):

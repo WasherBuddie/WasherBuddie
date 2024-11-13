@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from Service_Layer.Interaction_Manager import Interaction_Manager
-from Service_Layer.Machine import Machine
-from Service_Layer.User import User
-import Service_Layer.Notification_Manager
+from src.Service_Layer.Interaction_Manager import Interaction_Manager
+from src.Service_Layer.Machine import Machine
+from src.Service_Layer.User import User
+import src.Service_Layer.Notification_Manager
 
 class TestInteractionManager(unittest.TestCase):
 
