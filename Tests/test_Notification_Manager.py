@@ -15,7 +15,7 @@ class TestNotificationManager(unittest.TestCase):
         self.user1 = User("James Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
         self.user2 = User("William Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
         self.machine = Machine('Dryer')
-        self.notifier = Notification_Sender.Notification_Sender()
+        self.notifier = Notification_Sender()
 
 
     def test_send_notification_success(self):
