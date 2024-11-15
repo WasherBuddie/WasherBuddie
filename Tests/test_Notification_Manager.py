@@ -46,15 +46,10 @@ class TestNotificationManager(unittest.TestCase):
 
         self.manager.send_user_notification(self.user1, self.machine) 
 
-
     def test_send_user_notification_success_email(self):
         self.non_admin_user.notification_preference = 'Email'
         
         self.manager.send_user_notification(self.non_admin_user, self.machine)
-
-        # with patch('Notification_Sender.send_email_notification') as mock_send:
-        #     self.manager.send_user_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
 
     def test_send_user_notification_type_error_user(self):
         with self.assertRaises(TypeError):
@@ -69,19 +64,10 @@ class TestNotificationManager(unittest.TestCase):
         
         self.manager.send_follow_up_notification(self.user1, self.machine)
 
-        # with patch('Notification_Sender.send_follow_up_text_notification') as mock_send:
-        #     self.manager.send_follow_up_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
-
     def test_send_follow_up_notification_success_email(self):
         self.non_admin_user.notification_preference = 'Email'
         
         self.manager.send_follow_up_notification(self.non_admin_user, self.machine)
-
-
-        # with patch('Notification_Sender.send_follow_up_email_notification') as mock_send:
-        #     self.manager.send_follow_up_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
 
     def test_send_follow_up_notification_type_error_user(self):
         with self.assertRaises(TypeError):
@@ -95,10 +81,6 @@ class TestNotificationManager(unittest.TestCase):
         message = "Hello!"
         
         self.manager.send_ping(self.user1, self.user2, message)
-
-    #     with patch('Notification_Sender.send_custom_message') as mock_send:
-    #         self.manager.send_ping(self.admin_user, self.user1, message)
-    #         mock_send.assert_called_once_with(self.admin_user, self.user1, message)
 
     def test_send_ping_type_error_sending_user(self):
         with self.assertRaises(TypeError):
