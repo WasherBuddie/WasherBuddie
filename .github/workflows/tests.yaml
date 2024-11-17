@@ -31,7 +31,7 @@ jobs:
     
     - name: Run tests with pytest
       run: |
-        python -m pytest tests/ \
+        python -m pytest Tests/ \
           --cov=src.Service_Layer \
           --cov-report=term-missing \
           --cov-report=xml:coverage.xml \
