@@ -3,3 +3,4 @@
 __pycache__/
 test_Interaction_Manager.py
 Notification_Sender.py
+.env
