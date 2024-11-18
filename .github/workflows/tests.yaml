@@ -43,10 +43,20 @@ jobs:
           --verbose \
           --import-mode=importlib
 
-    - name: Debug coverage file
-      if: always()
+    - name: Debug coverage file (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: cmd
       run: |
-        pwd
+        echo Current directory contents:
+        dir
+        echo.
+        echo Checking coverage.xml:
+        if exist coverage.xml (echo coverage.xml exists) else (echo coverage.xml not found)
+    
+    - name: Debug coverage file (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        echo "Current directory contents:"
         ls -la
         echo "Coverage file exists:"
         test -f coverage.xml && echo "Yes" || echo "No"
