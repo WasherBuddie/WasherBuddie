@@ -42,14 +42,24 @@ jobs:
           --cov-report=xml:coverage.xml \
           --verbose \
           --import-mode=importlib
+
+    - name: Debug coverage file
+      if: always()
+      run: |
+        pwd
+        ls -la
+        echo "Coverage file exists:"
+        test -f coverage.xml && echo "Yes" || echo "No"
     
     - name: Upload coverage report
       if: success()
       uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
-        files: coverage.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true
         verbose: true
-        token: ${{ secrets.CODECOV_TOKEN }}
