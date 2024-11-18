@@ -28,8 +28,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[test]
         pip install pytest-cov
+
+    - name: Run tests with pytest (Windows)
+      if: matrix.os == 'windows-latest'
+      run: python -m pytest Tests/ --cov=src.Service_Layer --cov-report=term-missing --cov-report=xml:coverage.xml --verbose --import-mode=importlib
     
-    - name: Run tests with pytest
+    - name: Run tests with pytest (Unix)
+      if: matrix.os != 'windows-latest'
       run: |
         python -m pytest Tests/ \
           --cov=src.Service_Layer \
@@ -46,3 +51,5 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true
+        verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}

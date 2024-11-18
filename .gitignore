@@ -1,5 +1,5 @@
 # ignore the Notification_Sender class
-/Service_Layer/Notification_Sender.py
+Notification_Sender.py
 .vscode/
 __pycache__/
 test_Interaction_Manager.py
