@@ -23,7 +23,7 @@ class User:
         else:
             raise ValueError("No username was provided")
         
-        if len(str(abs(user_phone_number))) == 10:
+        if len(str(int(user_phone_number))) == 10:
             # check if the user input a 10 digit phone number
             self._user_phone_number = user_phone_number
             self._phone_carrier = phone_carrier
