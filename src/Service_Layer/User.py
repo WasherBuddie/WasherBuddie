@@ -1,5 +1,5 @@
 class User:
-    def __init__(self, user_name, user_email, phone_carrier, notification_preference, user_phone_number='', is_admin=False):
+    def __init__(self, user_name, user_email, phone_carrier, notification_preference, user_phone_number='', is_admin=False, password='defaultpassword123'):
         """
         Creates a new instance of a User
 
@@ -7,9 +7,11 @@ class User:
             user_name (str): The first and last name of the user
             user_email (str): The user's preferred email address to receive notifications
             phone_carrier (str): User's mobile phone carrier to receive text messages through our system
-                                    Should be part of a list that is to be specified...            notification_preference (_type_): _description_
+                                    Should be part of a list that is to be specified...            
+            notification_preference (str): either email or text notification preferences
             user_phone_number (int): The user's 10 digit phone number. Defaults to ''.
             is_admin (bool, optional): Whether or not the user has administrative functions. Defaults to False.
+            password (str, optional): user's password to access their account. Defaults to 'defaultpassword123'.
 
         Raises:
             ValueError: Raises error if the user did not input their first and last name
@@ -45,6 +47,7 @@ class User:
             raise ValueError("Invalid communication preference was provided.")
         
         self._is_admin = is_admin
+        self._password = password
 
     @property
     def user_name(self):
@@ -181,3 +184,29 @@ class User:
             boolean: True or False
         """
         return self._is_admin
+
+    @property
+    def password(self):
+        """
+        Checks the user's password
+
+        Returns:
+            str: user's password
+        """
+        return self._password
+    
+    @password.setter
+    def password(self, password):
+        """
+        Changes the user's password
+
+        Args:
+            password (str): user's new password
+
+        Raises:
+            TypeError: if the new password is not a str
+        """
+        if not isinstance(password, str):
+            raise TypeError("Password must be a string")
+        
+        self._password = password

@@ -6,7 +6,7 @@ class Machine:
     A class representing a washer or dryer machine
     """
 
-    def __init__(self, machine_type):
+    def __init__(self, machine_type, machine_id):
         """
         Creates a new instance of a Machine
 
@@ -21,10 +21,26 @@ class Machine:
         else:
             raise ValueError("Invalid machine type")
 
+        self._machine_id = machine_id
         self._current_state = 'Available'
         self._start_time = None
         self._end_time = None
         self._who_is_using = None
+
+    @property
+    def machine_id(self):
+        """Getter for the machine id."""
+        return self._machine_id
+    
+    @machine_id.setter
+    def machine_id(self, value):
+        """
+        Sets the machine id
+
+        Args:
+            value (int): id for the machine
+        """
+        self._machine_id = value
 
     @property
     def current_state(self):
@@ -56,7 +72,7 @@ class Machine:
             '''
             CHANGE TIME DELTA BASED ON MACHINE TYPE AFTER DEMO
             '''
-            time_change = timedelta(minutes=1 if self.machine_type == 'Washer' else 1)
+            time_change = timedelta(minutes=50 if self.machine_type == 'Washer' else 60)
             self.end_time = self.start_time + time_change
         elif self._current_state == 'In Use' and next_state == 'Available':
             # Ending cycle
@@ -116,37 +132,6 @@ class Machine:
             str: 'Washer' or 'Dryer'
         """
         return self._machine_type
-
-    @machine_type.setter
-    def machine_type(self, value):
-        """
-        Sets the type of machine
-
-        Args:
-            machine_type (str): 'Washer' or 'Dryer'
-            
-        Raises:
-            ValueError: Raises error if the machine type is not a washer or dryer
-            TypeError: Raises error if the user is not of type User
-            PermissionError: Raises error if the user is not an admin
-        """
-        
-        if not isinstance(value, tuple) or len(value) != 2 or not isinstance(value[1], User):
-            raise TypeError("Invalid machine type or user type")
-        
-        machine_type = value[0]
-        user = value[1]
-        
-        if not isinstance(user, User):
-            raise TypeError("User must be an instance of User")
-
-        if user.is_admin == False:
-            raise PermissionError("User does not have permission to change machine type")
-
-        if machine_type.title() == 'Washer' or machine_type.title() == 'Dryer':
-            self._machine_type = machine_type
-        else:
-            raise ValueError("Invalid machine type")
                 
     @property
     def who_is_using(self):

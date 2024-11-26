@@ -3,6 +3,7 @@ from Service_Layer.User import User
 import datetime
 import time
 from Service_Layer.Notification_Manager import Notification_Manager
+from mongoDB.CRUD_api import *
 
 class Machine_Manager:
 	"""
@@ -27,15 +28,23 @@ class Machine_Manager:
 			raise TypeError()
 		
 		machine.current_state = ("In Use", user)
+		change_machine_state(machine.machine_id, "In Use")
+		change_machine_user(machine.machine_id, user.user_name)
   
-		while True:
-			now = datetime.datetime.now()
-			target_datetime = machine.end_time
-			time_to_wait = (target_datetime - now).total_seconds()
+		now = datetime.datetime.now()
+		change_machine_start_time(machine.machine_id, now)
+  
+		target_datetime = machine.end_time
+		change_machine_end_time(machine.machine_id, target_datetime)
+  
+		time_to_wait = (target_datetime - now).total_seconds()
+		if time_to_wait > 0:
 			time.sleep(time_to_wait)
-			Machine_Manager.end_session(self, machine, user)
-			Machine_Manager.notify_user(self, machine, user)
-			return True
+   
+		Machine_Manager.end_session(self, machine, user)
+		Machine_Manager.notify_user(self, machine, user)
+  
+		return True
 		
 	def end_session(self, machine, user):
 		"""
@@ -44,6 +53,7 @@ class Machine_Manager:
 		Args:
 			machine (Machine): machine the user is using
 			user (User): user using the machine
+			machine_id (int): id of the machine
 
 		Raises:
 			TypeError: if the parameters are not of type Machine or User
@@ -51,10 +61,12 @@ class Machine_Manager:
 		Returns:
 			None: if the machine is successfully set to 'Available'
 		"""
-		if type(machine) != Machine or type(user) != User:
+		if not (isinstance(machine, Machine) and isinstance(user, User)):
 			raise TypeError()
 
 		machine.current_state = ('Available', user)
+		change_machine_state(machine.machine_id, "Available")
+		change_machine_user(machine.machine_id, None)
 		return True
 		
 	def set_out_of_order(self, machine, status, user):
@@ -70,13 +82,14 @@ class Machine_Manager:
 			TypeError: if the parameters are not of type Machine or User
 			PermissionError: if the user is not an admin
 		"""
-		if type(machine) != Machine or type(user) != User:
+		if not (isinstance(machine, Machine) and isinstance(user, User) and isinstance(status, str)):
 			raise TypeError()
 
 		if not user.is_admin:
 			raise PermissionError()
 
 		machine.current_state = (status, user)
+		change_machine_state(machine.machine_id, status)
 		return True
 
 	def get_status(self, machine):
@@ -112,21 +125,4 @@ class Machine_Manager:
 			raise TypeError()
 
 		Notification_Manager.send_user_notification(Notification_Manager(), user, machine)
-		return True
-		
-	def log_event(self, machine, user):
-		"""
-		Logs the user's interaction with the machine
-
-		Args:
-			machine (Machine): machine to log the event of
-			user (User): user to log
-
-		Raises:
-			TypeError: if the parameters are not of type Machine or User
-		"""
-		if type(machine) != Machine or type(user) != User:
-			raise TypeError()
-
-		# utilize logging service to log the event
 		return True

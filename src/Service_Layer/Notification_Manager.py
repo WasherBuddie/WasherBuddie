@@ -94,7 +94,3 @@ class Notification_Manager:
             raise TypeError()
 
         Notification_Sender.send_custom_message = (sending_user, receiving_user, message)
-    
-    def log_event(self, user_event):
-        # log any events with their timestamps into our database
-        pass
