@@ -9,12 +9,12 @@ class TestMachineManager(unittest.TestCase):
 
 	def setUp(self):
 		self.manager = Machine_Manager()
-		self.washer1 = Machine('Washer')
-		self.washer2 = Machine('Washer')
-		self.dryer1 = Machine('Dryer')
-		self.dryer2 = Machine('Dryer')
+		self.washer1 = Machine('Washer', 111)
+		self.washer2 = Machine('Washer', 112)
+		self.dryer1 = Machine('Dryer', 121)
+		self.dryer2 = Machine('Dryer', 122)
 		self.test_user = User('Nikhil Jindal', 'nxj224@case.edu', 'T-Mobile', 'Email', 9093309194, False)
-		self.test_admin_user = User('Nikhil Jindal', 'nxj224@case.edu', 'T-Mobile', 'Email', 9093309194, True)
+		self.test_admin_user = User('Nikhil Jindal', 'nxj224@case.edu', 'T-Mobile', 'Email', 9093309194, True, 'newpswdt3st!ng')
 		
 	def test_create_session_and_end_session_success(self):
 		# create a user session

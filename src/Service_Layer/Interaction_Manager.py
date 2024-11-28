@@ -1,10 +1,14 @@
-from Service_Layer.Machine import Machine
-from Service_Layer.User import User
-from Service_Layer.Notification_Manager import Notification_Manager
-from mongoDB.CRUD_api import *
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from mongoDB.CRUD_api import Database_Manager
+    from src.Service_Layer.Machine import Machine
+    from src.Service_Layer.User import User
+    from src.Service_Layer.Notification_Manager import Notification_Manager
 
 class Interaction_Manager:
-    def add_washer(self, machine_id):
+    def add_washer(self, machine_id: int) -> bool:
         """
         Adds a new washing machine
         
@@ -15,11 +19,12 @@ class Interaction_Manager:
             boolean: whether or not the washer was added successfully
         """
         try:
-            return insert_washer(Machine('Washer', machine_id))
+            Machine('Washer', machine_id)
+            return True
         except:
             return False
 
-    def add_dryer(self, machine_id):
+    def add_dryer(self, machine_id: int) -> bool:
         """
         Adds a new drying machine
         
@@ -30,11 +35,11 @@ class Interaction_Manager:
             boolean: whether or not the dryer was added successfully
         """
         try:
-            return insert_dryer(Machine('Dryer', machine_id))
+            return Database_Manager().insert_dryer(Machine('Dryer', machine_id))
         except:
             return False
 
-    def send_notification(self, sending_user, receiving_user, message):
+    def send_notification(self, sending_user: User, receiving_user: User, message: str):
         """
         Sends a notification to another user from the current user
 
@@ -45,7 +50,7 @@ class Interaction_Manager:
         """
         Notification_Manager.send_ping(sending_user, receiving_user, message)
 
-    def add_user(self, user_name, notification_preference, user_phone_number, user_email, phone_carrier, is_admin=False, password='defaultpassword123'):
+    def add_user(self, user_name: str, notification_preference: str, user_phone_number: int, user_email: str, phone_carrier: str, is_admin:Optional[bool]=False, password:Optional[str]='defaultpassword123') -> bool:
         """
         Adds a user to the database
 
@@ -62,11 +67,11 @@ class Interaction_Manager:
             _type_: _description_
         """
         try:
-            return insert_single_user(User(user_name, user_email, phone_carrier, notification_preference, user_phone_number, is_admin, password))
+            return Database_Manager().insert_single_user(User(user_name, user_email, phone_carrier, notification_preference, user_phone_number, is_admin, password))
         except:
             return False
 
-    def remove_user(self, user_name):
+    def remove_user(self, user_name: str) -> bool:
         """
         Removes a user from the database
 
@@ -77,11 +82,11 @@ class Interaction_Manager:
             boolean: True if the user was removed successfully, False otherwise
         """
         try:
-            return delete_single_user(user_name)
+            return Database_Manager().delete_single_user(user_name)
         except:
             return False
 
-    def authenticate_log_in(self, email_address, password):
+    def authenticate_log_in(self, email_address: str, password: str) -> bool:
         """
         Authenticates a user's log in using their email and password
 
@@ -93,7 +98,7 @@ class Interaction_Manager:
             boolean: True if the user is authenticated, False otherwise
         """
         try:
-            return validate_user(email_address, password)
+            return Database_Manager().validate_user(email_address, password)
         except:
             return False
 
@@ -105,6 +110,6 @@ class Interaction_Manager:
             list: list of all valid users as Users, False otherwise
         """
         try:
-            return get_valid_users()
+            return Database_Manager().get_valid_users()
         except:
             return False
