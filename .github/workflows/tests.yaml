@@ -35,7 +35,7 @@ jobs:
         pip install .[test]
         pip install pytest-cov
         pip install python-dotenv
-        pip install pymongo
+        pip install --force-reinstall "pymongo==4.10.1"
         pip install bcrypt
 
     - name: Run tests with pytest (Windows)
