@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from dotenv import load_dotenv, find_dotenv
 import os
+import sys
+import platform
+import urllib.parse
 from pymongo import MongoClient
 import bcrypt
 import datetime
@@ -17,14 +20,49 @@ class Database_Manager:
 	"""
 
 	def setup_connection(self):
-		"""
-		Connects to the MongoDB database and returns the database object
-		"""
+		# Diagnostic information
+		print("Platform Information:")
+		print(f"Python Platform: {sys.platform}")
+		print(f"OS Name: {os.name}")
+		print(f"Platform Details: {platform.platform()}")
+		print(f"Python Version: {sys.version}")
+
+		# Retrieve password
 		password = os.environ.get("MONGODB_PWD")
-		connection_string = f"mongodb+srv://WasherBuddie:{password}@washerbuddie.2izth.mongodb.net/?retryWrites=true&w=majority&appName=WasherBuddie"
-		client = MongoClient(connection_string)
-		washerbuddie_db = client.WasherBuddie
-		return washerbuddie_db
+		
+		# Additional password diagnostics
+		print(f"Password Present: {bool(password)}")
+		print(f"Password Length: {len(password) if password else 0}")
+		
+		# Ensure password is not None or empty
+		if not password:
+			raise ValueError("MongoDB password is not set in environment variables")
+		
+		try:
+			# URL encode the password to handle special characters
+			encoded_password = urllib.parse.quote_plus(password)
+			
+			# Create connection string with explicit parameters
+			connection_string = f"mongodb+srv://WasherBuddie:{encoded_password}@washerbuddie.2izth.mongodb.net/?retryWrites=true&w=majority&appName=WasherBuddie"
+			
+			# Create client with explicit authentication
+			client = MongoClient(
+				connection_string, 
+				username="WasherBuddie", 
+				password=password,
+				authSource="admin"
+			)
+			
+			# Verify connection
+			client.admin.command('ping')
+			
+			washerbuddie_db = client.WasherBuddie
+			return washerbuddie_db
+		
+		except Exception as e:
+			print(f"Connection Error: {type(e).__name__}")
+			print(f"Error Details: {str(e)}")
+			raise
 
 	def insert_single_user(self, user: User) -> bool:
 		"""

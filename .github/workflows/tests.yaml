@@ -18,11 +18,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up environment
+    - name: Set up environment and debug
       env:
         MONGODB_PWD: ${{ secrets.MONGODB_PWD }}
       run: |
-        echo "MONGODB_PWD=$MONGODB_PWD" > .env
+        echo "Platform: $RUNNER_OS"
+        echo "Python version: $(python --version)"
+        echo "MongoDB Password length: ${#MONGODB_PWD}"
+        python -c "import os, sys, platform; print(f'Python Platform: {sys.platform}\nOS Name: {os.name}\nPlatform Details: {platform.platform()}\nPython Version: {sys.version}')"
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
