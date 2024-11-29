@@ -18,6 +18,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Set up environment
+      shell: bash
+      env:
+        MONGODB_PWD: ${{ secrets.MONGODB_PWD }}
+      run: |
+        echo "MONGODB_PWD=$MONGODB_PWD" > .env
+    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -31,15 +38,6 @@ jobs:
         pip install python-dotenv
         pip install --force-reinstall "pymongo==4.10.1"
         pip install bcrypt
-
-    - name: Set up environment and debug
-      env:
-        MONGODB_PWD: ${{ secrets.MONGODB_PWD }}
-      run: |
-        echo "Platform: $RUNNER_OS"
-        echo "Python version: $(python --version)"
-        echo "MongoDB Password length: ${#MONGODB_PWD}"
-        python -c "import os, sys, platform; print(f'Python Platform: {sys.platform}\nOS Name: {os.name}\nPlatform Details: {platform.platform()}\nPython Version: {sys.version}')"
 
     - name: Run tests with pytest (Windows)
       if: matrix.os == 'windows-latest'

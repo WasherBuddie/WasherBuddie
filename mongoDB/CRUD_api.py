@@ -2,11 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from dotenv import load_dotenv, find_dotenv
 import os
-import urllib.parse
 from pymongo import MongoClient
 import bcrypt
 import datetime
-load_dotenv(find_dotenv())
 from src.Service_Layer.Machine import Machine
 from src.Service_Layer.User import User
 
@@ -18,46 +16,15 @@ class Database_Manager:
 	"""
 
 	def setup_connection(self):
-		# Load environment variables from .env file
-		load_dotenv()
-
-		# Get password from environment variables
+		"""
+		Connects to the MongoDB database and returns the database object
+		"""
+		load_dotenv(find_dotenv())
 		password = os.environ.get("MONGODB_PWD")
-		
-		# Validate password
-		if not password:
-			raise ValueError("MongoDB password is not set in environment variables")
-		
-		# URL encode the password to handle special characters
-		try:
-			encoded_password = urllib.parse.quote_plus(password)
-			
-			# Construct connection string
-			connection_string = (
-				f"mongodb+srv://WasherBuddie:{encoded_password}"
-				"@washerbuddie.2izth.mongodb.net/"
-				"?retryWrites=true&w=majority&appName=WasherBuddie"
-			)
-			
-			# Create MongoDB client with explicit authentication
-			client = MongoClient(
-				connection_string,
-				username="WasherBuddie",
-				password=password,
-				authSource="admin"
-			)
-			
-			# Verify connection by pinging the admin database
-			client.admin.command('ping')
-			
-			# Return the database
-			return client.WasherBuddie
-		
-		except Exception as e:
-			# Log the specific error for debugging
-			print(f"Connection Error: {type(e).__name__}")
-			print(f"Error Details: {str(e)}")
-			raise
+		connection_string = f"mongodb+srv://WasherBuddie:{password}@washerbuddie.2izth.mongodb.net/?retryWrites=true&w=majority&appName=WasherBuddie"
+		client = MongoClient(connection_string)
+		washerbuddie_db = client.WasherBuddie
+		return washerbuddie_db
 
 	def insert_single_user(self, user: User) -> bool:
 		"""
