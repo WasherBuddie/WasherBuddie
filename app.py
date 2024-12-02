@@ -108,6 +108,11 @@ def add_dryer():
 def get_machines():
     return jsonify({'DB_machines': [machine.__dict__ for machine in Database_Manager().get_all_machines()]})
 
+@app.route('/get_admin', methods=['GET'])
+def get_machines():
+    return jsonify({'admin': session['is_admin']})
+
+
 @app.route('/send_notification', methods=['POST'])
 def send_notification():
     data = request.json
