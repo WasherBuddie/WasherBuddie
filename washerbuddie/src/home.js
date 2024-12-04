@@ -21,7 +21,7 @@ function Home() {
         <h1>Welcome to Washer Buddie</h1>
         <p>Your one-stop spot for all laundry needs!</p>
         {showButton && (
-          <button onClick={() => navigate('/login')}>Continue</button>
+          <button onClick={() => navigate('/home-page')}>Continue</button>
         )}
       </div>
     </>

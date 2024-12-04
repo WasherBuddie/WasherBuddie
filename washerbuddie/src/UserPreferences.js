@@ -1,58 +1,146 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Header from './Header';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Header from "./Header";
 
 function UserPreferences() {
-  const [email, setEmail] = useState('');
-  const [reEmail, setReEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rePassword, setRePassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [rePhone, setRePhone] = useState('');
-  const [notification, setNotification] = useState('email');
+  const [email, setEmail] = useState("");
+  const [reEmail, setReEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [rePhone, setRePhone] = useState("");
+  const [notification, setNotification] = useState("email");
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
-  const handleEmailUpdate = (e) => {
+  useEffect(() => {
+    const fetchAdminStatus = async () => {
+      try {
+        const response = await fetch("/get_admin");
+        const data = await response.json();
+        if (response.ok) {
+          setIsAdmin(data.admin);
+        } else {
+          console.error("Failed to fetch admin status:", data.error);
+        }
+      } catch (err) {
+        console.error("Error fetching admin status:", err);
+      }
+    };
+
+    fetchAdminStatus();
+  }, []);
+
+  const handleEmailUpdate = async (e) => {
     e.preventDefault();
     if (email !== reEmail) {
-      toast.error('Emails do not match!', { position: toast.POSITION.TOP_RIGHT });
+      toast.error("Emails do not match!", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
-    // Logic to update email
-    toast.success('Email updated successfully!', { position: toast.POSITION.TOP_RIGHT });
+    try {
+      const response = await fetch("/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: 0, value: email }),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.success) {
+        toast.success("Email updated successfully!", { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        toast.error(result.error || "Failed to update email.", { position: toast.POSITION.TOP_RIGHT });
+      }
+    } catch (err) {
+      toast.error("Error updating email. Please try again.", { position: toast.POSITION.TOP_RIGHT });
+    }
   };
 
-  const handlePasswordUpdate = (e) => {
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
     if (password !== rePassword) {
-      toast.error('Passwords do not match!', { position: toast.POSITION.TOP_RIGHT });
+      toast.error("Passwords do not match!", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
-    // Logic to update password
-    toast.success('Password updated successfully!', { position: toast.POSITION.TOP_RIGHT });
+    try {
+      const response = await fetch("/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: 1, value: password }),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.success) {
+        toast.success("Password updated successfully!", { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        toast.error(result.error || "Failed to update password.", { position: toast.POSITION.TOP_RIGHT });
+      }
+    } catch (err) {
+      toast.error("Error updating password. Please try again.", { position: toast.POSITION.TOP_RIGHT });
+    }
   };
 
-  const handlePhoneUpdate = (e) => {
+  const handlePhoneUpdate = async (e) => {
     e.preventDefault();
     if (phone !== rePhone) {
-      toast.error('Phone numbers do not match!', { position: toast.POSITION.TOP_RIGHT });
+      toast.error("Phone numbers do not match!", { position: toast.POSITION.TOP_RIGHT });
       return;
     }
-    // Logic to update phone number
-    toast.success('Phone number updated successfully!', { position: toast.POSITION.TOP_RIGHT });
+    try {
+      const response = await fetch("/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: 2, value: phone }),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.success) {
+        toast.success("Phone number updated successfully!", { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        toast.error(result.error || "Failed to update phone number.", { position: toast.POSITION.TOP_RIGHT });
+      }
+    } catch (err) {
+      toast.error("Error updating phone number. Please try again.", { position: toast.POSITION.TOP_RIGHT });
+    }
   };
 
-  const handleNotificationUpdate = (e) => {
+  const handleNotificationUpdate = async (e) => {
     e.preventDefault();
-    // Logic to update notification settings
-    toast.success('Notification settings updated successfully!', { position: toast.POSITION.TOP_RIGHT });
+    try {
+      const response = await fetch("/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: 3, value: notification }),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.success) {
+        toast.success("Notification method updated successfully!", { position: toast.POSITION.TOP_RIGHT });
+      } else {
+        toast.error(result.error || "Failed to update notification method.", { position: toast.POSITION.TOP_RIGHT });
+      }
+    } catch (err) {
+      toast.error("Error updating notification method. Please try again.", { position: toast.POSITION.TOP_RIGHT });
+    }
   };
 
   const handleAdminAccess = () => {
-    // Logic to access admin settings
-    navigate('/admin');
+    if (isAdmin) {
+      navigate("/admin");
+    } else {
+      toast.error("You do not have admin permissions.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
   };
 
   return (
@@ -140,8 +228,8 @@ function UserPreferences() {
                 value={notification}
                 onChange={(e) => setNotification(e.target.value)}
               >
-                <option value="email">Email</option>
-                <option value="phone">Phone</option>
+                <option value="Email">Email</option>
+                <option value="Phone">Phone</option>
                 <option value="off">Off</option>
               </select>
             </label>
@@ -150,7 +238,20 @@ function UserPreferences() {
         </div>
         <div className="preferences-box">
           <h2>Admin Settings</h2>
-          <button onClick={handleAdminAccess}>Access Admin Settings</button>
+          <button
+            onClick={handleAdminAccess}
+            disabled={!isAdmin}
+            style={{
+              backgroundColor: isAdmin ? "blue" : "gray",
+              cursor: isAdmin ? "pointer" : "not-allowed",
+              color: "#fff",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "5px",
+            }}
+          >
+            Access Admin Settings
+          </button>
         </div>
       </div>
       <ToastContainer />

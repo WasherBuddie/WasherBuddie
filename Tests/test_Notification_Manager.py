@@ -1,10 +1,10 @@
 import unittest
 import pytest
 from unittest.mock import MagicMock, patch
-from Service_Layer.Notification_Manager import Notification_Manager
-from Service_Layer.User import User
-from Service_Layer.Machine import Machine
-from Service_Layer.Notification_Sender import Notification_Sender
+from src.Service_Layer.Notification_Manager import Notification_Manager
+from src.Service_Layer.User import User
+from src.Service_Layer.Machine import Machine
+from src.Service_Layer.Notification_Sender import Notification_Sender
 
 class TestNotificationManager(unittest.TestCase):
 
@@ -14,8 +14,8 @@ class TestNotificationManager(unittest.TestCase):
         self.non_admin_user = User("Steve Faal", "jaydonfaal@gmail.com", "Verizon", "Email", 6269935329,False)
         self.user1 = User("James Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
         self.user2 = User("William Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
-        self.machine = Machine('Dryer')
-        self.notifier = Notification_Sender.Notification_Sender()
+        self.machine = Machine('Dryer', 101)
+        self.notifier = Notification_Sender()
 
 
     def test_send_notification_success(self):
@@ -46,15 +46,10 @@ class TestNotificationManager(unittest.TestCase):
 
         self.manager.send_user_notification(self.user1, self.machine) 
 
-
     def test_send_user_notification_success_email(self):
         self.non_admin_user.notification_preference = 'Email'
         
         self.manager.send_user_notification(self.non_admin_user, self.machine)
-
-        # with patch('Notification_Sender.send_email_notification') as mock_send:
-        #     self.manager.send_user_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
 
     def test_send_user_notification_type_error_user(self):
         with self.assertRaises(TypeError):
@@ -69,19 +64,10 @@ class TestNotificationManager(unittest.TestCase):
         
         self.manager.send_follow_up_notification(self.user1, self.machine)
 
-        # with patch('Notification_Sender.send_follow_up_text_notification') as mock_send:
-        #     self.manager.send_follow_up_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
-
     def test_send_follow_up_notification_success_email(self):
         self.non_admin_user.notification_preference = 'Email'
         
         self.manager.send_follow_up_notification(self.non_admin_user, self.machine)
-
-
-        # with patch('Notification_Sender.send_follow_up_email_notification') as mock_send:
-        #     self.manager.send_follow_up_notification(self.user1, self.machine)
-        #     mock_send.assert_called_once_with(self.user1, self.machine)
 
     def test_send_follow_up_notification_type_error_user(self):
         with self.assertRaises(TypeError):
@@ -95,10 +81,6 @@ class TestNotificationManager(unittest.TestCase):
         message = "Hello!"
         
         self.manager.send_ping(self.user1, self.user2, message)
-
-    #     with patch('Notification_Sender.send_custom_message') as mock_send:
-    #         self.manager.send_ping(self.admin_user, self.user1, message)
-    #         mock_send.assert_called_once_with(self.admin_user, self.user1, message)
 
     def test_send_ping_type_error_sending_user(self):
         with self.assertRaises(TypeError):

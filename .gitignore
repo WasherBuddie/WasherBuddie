@@ -1,2 +1,5 @@
 # ignore the Notification_Sender class
-/Notification_Sender.py
+.vscode/
+__pycache__/
+Notification_Sender.py
+.env

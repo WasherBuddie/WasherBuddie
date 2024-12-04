@@ -1,8 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import smtplib
 from email.mime.text import MIMEText
-from Service_Layer.User import User
-from Service_Layer.Notification import Notification
-from Service_Layer.Machine import Machine
+
+if TYPE_CHECKING:
+	from src.Service_Layer.User import User
+	from src.Service_Layer.Notification import Notification
+	from src.Service_Layer.Machine import Machine
 
 class Notification_Sender:
 	
@@ -15,9 +19,11 @@ class Notification_Sender:
 						'T-Mobile': '@tmomail.net',
 						'U.S. Cellular': '@mms.uscc.net',
 						}
+ 
+	_password = 'smbd ipal qysl zxxw'
 	
 	@property
-	def mobile_carriers(self):
+	def mobile_carriers(self) -> dict:
 		"""
 		Returns a list of mobile carriers and their gateway addresses
 
@@ -26,7 +32,17 @@ class Notification_Sender:
 		"""
 		return self._mobile_carriers
 
-	def	send_text_notification(self, user, machine):
+	@property
+	def password(self) -> str:
+		"""
+		Returns the password for the email account
+
+		Returns:
+			str: password for the email account
+		"""
+		return self._password
+
+	def	send_text_notification(self, user: User, machine: Machine):
 		"""
 		Sends a text notification to the user's phone number
 
@@ -37,21 +53,25 @@ class Notification_Sender:
 		Raises:
 			TypeError: if the parameters are not the correct types
 		"""	
+		from src.Service_Layer.User import User
+		from src.Service_Layer.Machine import Machine
+		from src.Service_Layer.Notification import Notification
+  
 		if not isinstance(user, User)  or not isinstance(machine, Machine):
 			raise TypeError()
 
-		msg = MIMEText(Notification.get_text_notification(self=Notification(), machineType=machine.machine_type))
+		msg = MIMEText(Notification().get_text_notification(machineType=machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Finished'
 		msg['From'] = 'WasherBuddie'
 		msg['To'] = str(user.user_phone_number) + self.mobile_carriers[user.phone_carrier]
 
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
-			smtp.login("washerbuddie@gmail.com", "zqsp ieqt qils etkr")
+			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()
    
-	def send_email_notification(self, user, machine):
+	def send_email_notification(self, user: User, machine: Machine):
 		"""
 		Sends an email notification to the user's email address
 
@@ -62,21 +82,25 @@ class Notification_Sender:
 		Raises:
 			TypeError: if the parameters are not the correct types
 		"""	
+		from src.Service_Layer.User import User
+		from src.Service_Layer.Machine import Machine
+		from src.Service_Layer.Notification import Notification
+  
 		if type(user) != User or type(machine) != Machine:
 			raise TypeError()
 
-		msg = MIMEText(Notification.get_email_notification(Notification(), user.user_name, machine.machine_type))
+		msg = MIMEText(Notification().get_email_notification(user.user_name, machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Finished'
 		msg['From'] = 'WasherBuddie'
 		msg['To'] = user.user_email
 
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
-			smtp.login("washerbuddie@gmail.com", "zqsp ieqt qils etkr")
+			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()
   
-	def send_follow_up_text_notification(self, user, machine):
+	def send_follow_up_text_notification(self, user: User, machine: Machine):
 		"""
 		Sends a follow-up text notification to the user's phone number
 
@@ -87,21 +111,25 @@ class Notification_Sender:
 		Raises:
 			TypeError: if the parameters are not the correct types
 		"""	
-		if type(user) != User or type(machine) != Machine:
+		from src.Service_Layer.User import User
+		from src.Service_Layer.Machine import Machine
+		from src.Service_Layer.Notification import Notification
+  
+		if not isinstance(user, User) or not isinstance(machine, Machine):
 			raise TypeError()
 
-		msg = MIMEText(Notification.get_follow_up_text_notification(self=Notification(), machineType=machine.machine_type))
+		msg = MIMEText(Notification().get_follow_up_text_notification(machineType=machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Been Stagnant'
 		msg['From'] = 'WasherBuddie'
 		msg['To'] = str(user.user_phone_number) + self.mobile_carriers[user.phone_carrier]
   
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
-			smtp.login("washerbuddie@gmail.com", "zqsp ieqt qils etkr")
+			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()
    
-	def send_follow_up_email_notification(self, user, machine):
+	def send_follow_up_email_notification(self, user: User, machine: Machine):
 		"""
 		Sends a follow-up email notification to the user's email address
 
@@ -112,21 +140,25 @@ class Notification_Sender:
 		Raises:
 			TypeError: if the parameters are not the correct types
 		"""
-		if type(user) != User or type(machine) != Machine:
+		from src.Service_Layer.User import User
+		from src.Service_Layer.Machine import Machine
+		from src.Service_Layer.Notification import Notification
+  
+		if not isinstance(user, User) or not isinstance(machine, Machine):
 			raise TypeError()
 
-		msg = MIMEText(Notification.get_follow_up_email_notification(Notification(), user.user_name, machine.machine_type))
+		msg = MIMEText(Notification().get_follow_up_email_notification(user.user_name, machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Been Stagnant'
 		msg['From'] = 'WasherBuddie'
 		msg['To'] = user.user_email
 
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
-			smtp.login("washerbuddie@gmail.com", "zqsp ieqt qils etkr")
+			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()
    
-	def send_custom_message(self, sending_user, receiving_user, message):
+	def send_custom_message(self, sending_user: User, receiving_user: User, message: str):
 		"""
 		Sends a custom message to the receiving user using their preferred method of communication from another user
 
@@ -138,7 +170,9 @@ class Notification_Sender:
 		Raises:
 			TypeError: if the parameters are not the correct types
 		"""
-		if type(sending_user) != User or type(receiving_user) != User:
+		from src.Service_Layer.User import User
+  
+		if not (isinstance(sending_user, User) and isinstance(receiving_user, User) and isinstance(message, str)):
 			raise TypeError()
 
 		if receiving_user.notification_preference == 'Text':
@@ -154,6 +188,6 @@ class Notification_Sender:
 
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
-			smtp.login("washerbuddie@gmail.com", "zqsp ieqt qils etkr")
+			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()

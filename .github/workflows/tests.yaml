@@ -1,0 +1,87 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.11', '3.12']
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up environment
+      shell: bash
+      env:
+        MONGODB_PWD: ${{ secrets.MONGODB_PWD }}
+      run: |
+        echo "MONGODB_PWD=$MONGODB_PWD" > .env
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[test]
+        pip install pytest-cov
+        pip install python-dotenv
+        pip install --force-reinstall "pymongo==4.10.1"
+        pip install bcrypt
+        pip install flask
+        pip install flask-cors
+
+    - name: Run tests with pytest (Windows)
+      if: matrix.os == 'windows-latest'
+      run: python -m pytest Tests/ --cov=src.Service_Layer --cov-report=term-missing --cov-report=xml:coverage.xml --verbose --import-mode=importlib
+    
+    - name: Run tests with pytest (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        python -m pytest Tests/ \
+          --cov=src.Service_Layer \
+          --cov-report=term-missing \
+          --cov-report=xml:coverage.xml \
+          --verbose \
+          --import-mode=importlib
+
+    - name: Debug coverage file (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: cmd
+      run: |
+        echo Current directory contents:
+        dir
+        echo.
+        echo Checking coverage.xml:
+        if exist coverage.xml (echo coverage.xml exists) else (echo coverage.xml not found)
+    
+    - name: Debug coverage file (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        echo "Current directory contents:"
+        ls -la
+        echo "Coverage file exists:"
+        test -f coverage.xml && echo "Yes" || echo "No"
+    
+    - name: Upload coverage report
+      if: success()
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        verbose: true

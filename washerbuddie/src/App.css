@@ -10,6 +10,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto; /* Enable vertical scrolling */
   min-height: 100vh;
 }
 
@@ -104,17 +105,33 @@ body {
 }
 
 .machine-row {
+  height:300px;
   display: flex;
   flex-wrap: wrap;
 }
 
-.machine-tile {
-  border: 1px solid #ccc;
-  padding: 16px;
-  margin: 8px;
-  width: 200px;
-  text-align: center;
+
+
+.preferences-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers the tiles horizontally */
+  gap: 20px; /* Adds consistent spacing between tiles */
+  width: 100vw;
+  padding: 20px; /* Adds some padding around the container */
+  box-sizing: border-box;
 }
+
+.preferences-box {
+  width: 150px; /* Ensures all tiles have the same width */
+  height: 300px;
+  padding: 20px;
+  border: 1px solid #ccc; /* Optional: Adds a border to each tile */
+  border-radius: 10px; /* Optional: Rounds the tile corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  background-color: #f9f9f9; /* Background color for the tiles */
+}
+
 
 header div {
   display: flex;
@@ -140,7 +157,7 @@ header button {
   border: 2px solid #0056b3;
   border-radius: 10px;
   padding: 20px;
-  width: 150px;
+  height: 350px;
   text-align: center;
 }
 
@@ -155,20 +172,30 @@ header button {
 .machine-list {
   display: flex;
   flex-wrap: wrap;
+  width: 100vw;
+  justify-content: center;
   gap: 1rem;
   padding: 1rem;
 }
 
 .machine-tile {
+  display: flex;
+  flex-direction: column; /* Stack the content vertically */
+  justify-content: center; /* Center the content vertically */
+  align-items: center; /* Center the content horizontally */
   border: 1px solid #ccc;
   padding: 1rem;
   border-radius: 5px;
   background-color: #f9f9f9;
-  width: 200px;
+  height: 250px;
+  width: 300px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
 }
 
+.admin-titles{
+  margin-left: 5vw;
+}
 .machine-tile:hover {
   transform: scale(1.05);
 }
@@ -185,6 +212,9 @@ header button {
   background-color: #0056b3;
   color: white;
   border: none;
+  font-size: large;
+  font-weight: bold;
+  width: 200px;
   padding: 0.5rem 1rem;
   border-radius: 5px;
   cursor: pointer;

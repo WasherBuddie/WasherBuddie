@@ -1,34 +1,52 @@
-# Step 1: Use Python 3.12-slim as the base image
-FROM python:3.12-slim
+# Backend Stage: Use Python 3.12 slim image for the Flask backend
+FROM python:3.12-slim AS backend
 
-# Install Node.js and npm
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory
+# Set working directory for backend (Flask)
 WORKDIR /app
 
-# Step 2: Set up Python dependencies (if you have any)
-# Copy and install Python dependencies
-COPY requirements.txt . 
+# Copy the requirements file and install Python dependencies
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Step 3: Set up React
+# Copy backend application files into the container
+COPY . /app/
+
+# Set up Flask environment variables (optional)
+ENV FLASK_APP=/app/app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=5000
+
+# Frontend Stage: Use Node.js 16-alpine for the React frontend
+FROM node:16-alpine AS frontend
+
+# Set working directory for frontend (React)
 WORKDIR /app/washerbuddie
 
-# Copy package.json and package-lock.json for React dependencies
-COPY washerbuddie/package.json washerbuddie/package-lock.json ./
-
-# Install React dependencies, including react-router-dom
+# Copy package.json and install React dependencies
+COPY washerbuddie/package.json .
 RUN npm install
 
-# Copy React source code
+# Copy the rest of the React app files into the container
 COPY washerbuddie/ .
 
-# Expose the React port (3000)
-EXPOSE 3000
+# Build the React application
+RUN npm run build
 
-# Step 4: Define the command to run React
-CMD ["npm", "start"]
+# Final Stage: Combine Backend and Frontend
+FROM python:3.12-slim
+
+# Set working directory for the combined application
+WORKDIR /app
+
+# Copy backend and frontend files from their respective stages
+COPY --from=backend /app /app
+COPY --from=frontend /app/washerbuddie/build /app/washerbuddie/build
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Expose ports for Flask (5000)
+EXPOSE 5000
+
+# Set the command to run the Flask server (React is static content in this setup)
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

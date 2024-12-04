@@ -20,6 +20,8 @@
   background-color: #0056b3;
 }
 
+
+
 .dropdown-menu {
   position: absolute;
   top: 40px;
@@ -41,6 +43,7 @@
 .dropdown-menu li {
   margin: 0;
   padding: 0;
+  width: 120px;
 }
 
 .dropdown-menu li button {
