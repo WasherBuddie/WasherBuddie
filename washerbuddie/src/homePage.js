@@ -9,6 +9,7 @@ function HomePage() {
     const [machines, setMachines] = useState([]);
     const navigate = useNavigate();
     const userName = 'test_user'; // Replace with the logged-in user's name
+    const [loading, setLoading] = useState(true);
 
     const fetchMachines = async () => {
         try {
@@ -46,8 +47,12 @@ function HomePage() {
     };
 
     useEffect(() => {
-        fetchMachines();
-
+        const loadData = async () => {
+            await fetchMachines();
+            setTimeout(() => setLoading(false), 2000); // Wait for 2 seconds
+        };
+        loadData();
+        
         const interval = setInterval(() => {
             setMachines((prevMachines) =>
                 prevMachines.map((machine) => {
@@ -138,6 +143,14 @@ function HomePage() {
     const handleLogout = () => {
         navigate('/login');
     };
+
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <h2>Page is loading...</h2>
+            </div>
+        );
+    }
 
     return (
         <div>

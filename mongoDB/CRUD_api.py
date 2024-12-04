@@ -386,6 +386,7 @@ class Database_Manager:
 			rv._start_time = machine['_start_time']
 			rv._end_time = machine['_end_time']
 			all_machines.append(rv)
+		all_machines.sort(key=lambda x: x.machine_id)
 		return all_machines
 
 	def find_user_by_id(self, user_id: str) -> User:
