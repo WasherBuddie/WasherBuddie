@@ -200,6 +200,87 @@ header button {
 .spacer{
   margin: 10px;
 }
+/* Send Message section styling */
+.message-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 40px; /* Adds space above */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  max-width: 600px; /* Ensures a max width */
+  margin: 40px auto; /* Centers the message box */
+}
+
+.message-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.message-textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px;
+  font-size: 1rem;
+  color: #333;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  resize: none; /* Disables resizing */
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.message-textarea:focus {
+  border-color: #0056b3; /* Highlights border on focus */
+}
+
+.send-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.send-button:active {
+  background-color: #00408f; /* Even darker blue when clicked */
+}
+
+/* Adding responsiveness */
+@media (max-width: 768px) {
+  .message-section {
+    width: 95%; /* Make the section almost full width on smaller screens */
+  }
+
+  .message-title {
+    font-size: 1.5rem;
+  }
+
+  .message-textarea {
+    height: 120px; /* Adjust textarea size */
+  }
+
+  .send-button {
+    font-size: 1rem; /* Adjust button font size for smaller screens */
+  }
+}
+
+
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 

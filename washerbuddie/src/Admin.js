@@ -265,16 +265,18 @@ function AdminPage() {
                     </div>
                 </div>
 
-                {/* Send Message section */}
-                <div className="section">
-                    <h2>Send Message</h2>
-                    <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Enter your message"
-                    />
-                    <button onClick={handleSendMessage}>Send Message</button>
-                </div>
+{/* Send Message section */}
+<div className="section message-section">
+    <h2 className="message-title">Send Message</h2>
+    <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Enter your message here..."
+        className="message-textarea"
+    />
+    <button onClick={handleSendMessage} className="send-button">Send Message</button>
+</div>
+
             </div>
         </div>
     );
