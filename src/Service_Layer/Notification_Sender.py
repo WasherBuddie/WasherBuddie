@@ -191,3 +191,31 @@ class Notification_Sender:
 			smtp.login("washerbuddie@gmail.com", self.password)
 			smtp.send_message(msg)
 			smtp.quit()
+   
+   
+def send_password(self, user, password):
+    from src.Service_Layer.User import User
+
+    if not isinstance(user, User):
+        raise TypeError()
+
+    if user.notification_preference == 'Text':
+        msg = MIMEText(
+            f"Your new password is {password}. Once you sign in you may change this password at any time"
+        )
+        msg['Subject'] = 'WasherBuddie - Message from ' + user.user_name
+        msg['From'] = user.user_name
+        msg['To'] = str(user.user_phone_number) + user.phone_carrier
+    elif user.notification_preference == 'Email':
+        msg = MIMEText(
+            f"Your new password is {password}. Once you sign in you may change this password at any time"
+        )
+        msg['Subject'] = 'WasherBuddie - Message from ' + user.user_name
+        msg['From'] = 'WasherBuddie'
+        msg['To'] = user.user_email
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login("washerbuddie@gmail.com", self.password)
+        smtp.send_message(msg)
+        smtp.quit()

@@ -61,11 +61,12 @@ function AdminPage() {
                 throw new Error(`Failed to fetch users: ${response.statusText}`);
             }
             const data = await response.json();
-            if (Array.isArray(data.users)) {
-                const userArray = data.users.map((user) => ({
-                    id: user.id,
-                    name: user.name,
-                    role: user.role,
+            if (Array.isArray(data.DB_users)) {
+                const userArray = data.DB_users.map((user) => ({
+                    id: user._user_name,
+                    name: user._user_name, // Use _user_name for the display name
+                    email: user._user_email, // If you want to show the email as well
+                    role: user._is_admin ? "Admin" : "Member",
                 }));
                 setUsers(userArray);
             }
@@ -202,8 +203,8 @@ function AdminPage() {
             <Header />
             <div className="admin-controls">
                 {/* Machines section */}
+                <h2 className="admin-titles">Machines</h2>
                 <div className="section">
-                    <h2 className="admin-titles">Machines</h2>
                     <div className="machine-list">
                         {machines.map((machine) => (
                             <div key={machine.id} className="machine-tile">
@@ -231,31 +232,36 @@ function AdminPage() {
                 </div>
 
                 {/* Users section */}
+                <h2 className="admin-titles">Users</h2>
                 <div className="section">
-                    <h2 className="admin-titles">Users</h2>
                     <div className="machine-list">
-                        {users.map((user) => (
-                            <div key={user.id} className="machine-tile">
-                                <h3>{user.name}</h3>
-                                <p>Role: {user.role}</p>
-                                <button
-                                    onClick={() => handleDeleteUser(user.id)}
-                                    style={{ backgroundColor: '#ff0000', color: '#fff' }}
-                                >
-                                    Delete Account
-                                </button>
-                                <button
-                                    onClick={() => handlePromoteUser(user.id)}
-                                    style={{
-                                        backgroundColor: user.role === 'Admin' ? '#d3d3d3' : '#007bff',
-                                        color: user.role === 'Admin' ? '#808080' : '#fff',
-                                    }}
-                                    disabled={user.role === 'Admin'}
-                                >
-                                    Promote
-                                </button>
-                            </div>
-                        ))}
+                        {users.length > 0 ? (
+                            users.map((user) => (
+                                <div key={user.id} className="machine-tile">
+                                    <h3>{user.name}</h3>
+                                    <p>Email: {user.email}</p>
+                                    <p>Role: {user.role}</p>
+                                    <button
+                                        onClick={() => handleDeleteUser(user.id)}
+                                        style={{ backgroundColor: '#ff0000', color: '#fff' }}
+                                    >
+                                        Delete Account
+                                    </button>
+                                    <button className='spacer'
+                                        onClick={() => handlePromoteUser(user.id)}
+                                        style={{
+                                            backgroundColor: user.role === 'Admin' ? '#d3d3d3' : '#007bff',
+                                            color: user.role === 'Admin' ? '#808080' : '#fff',
+                                        }}
+                                        disabled={user.role === 'Admin'}
+                                    >
+                                        Promote
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No users available.</p> // Show this if no users are present
+                        )}
                     </div>
                 </div>
 

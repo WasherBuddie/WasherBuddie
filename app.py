@@ -17,6 +17,7 @@ interaction_manager = Interaction_Manager()
 
 
 
+
 # API routes
 @app.route('/update', methods=['POST'])
 def update():
@@ -112,6 +113,17 @@ def get_machines():
         rv.append(machine.__dict__)
     return jsonify({'DB_machines': rv})
 
+
+@app.route('/get_users', methods=['GET'])
+def get_users():
+    rv = []
+    # Get all users
+    for user in Database_Manager().get_all_users():
+            rv.append(user.__dict__)
+    return jsonify({'DB_users': rv})
+
+
+
 @app.route('/send_notification', methods=['POST'])
 def send_notification():
     data = request.json
@@ -172,12 +184,25 @@ def logout():
 def get_admin():
     return jsonify({"admin": session['is_admin']}), 200
     
-@app.route('/reset_password', methods=['GET'])
+@app.route('/reset_password', methods=['POST'])
 def reset_password():
-    data = request.json
-    email = data.get('email')
-    interaction_manager.reset(email)
-    jsonify({'success': True})
+    try:
+        data = request.json
+        if not data or 'email' not in data:
+            return jsonify({'error': 'Invalid request, email is required'}), 400
+
+        email = data.get('email')
+        user = create_user_from_json(get_user_by_email(email))
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        interaction_manager.reset_password(user)
+        return jsonify({'success': True})
+    except Exception as e:
+        # Log the exception for debugging
+        print(f"Error: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/authenticate_log_in', methods=['POST'])
 def authenticate_log_in():
@@ -291,6 +316,30 @@ def notify_user():
         return jsonify({'success': success, 'message': 'Notification sent successfully' if success else 'Failed to send notification'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+def create_user_from_json():
+    # Extract JSON data from the POST request
+    user_data = request.json
+
+    if not user_data:
+        return jsonify({"error": "Invalid JSON payload"}), 400
+
+    # Create a User object
+    user = User(
+        user_name=user_data.get('user_name'),
+        user_email=user_data.get('email'),
+        phone_carrier=user_data.get('phone_carrier'),
+        notification_preference=user_data.get('notification_preference'),
+        user_phone_number=user_data.get('phone_number'),
+         is_admin=user_data.get('is_admin', False)  # Default to False if not provided
+    )
+
+    # Respond with a success message
+    return user
+
+
+    
 
 # Catch-all route for frontend routes handled by React
 @app.route('/')

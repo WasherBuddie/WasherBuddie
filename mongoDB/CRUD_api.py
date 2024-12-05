@@ -329,6 +329,11 @@ class Database_Manager:
 			return False
 		return True
 
+	def reset_password(self, email, password) -> bool:
+		collection = self.setup_connection().Users
+		collection.update_one({"_email": email}, {"$set": {"_password": password}})
+		return True
+
 	def change_machine_start_time(self, machine_id: int, new_start_time: Union[datetime.datetime, None]) -> bool:
 		"""
 		Changes the start time of a machine
@@ -387,6 +392,33 @@ class Database_Manager:
 			rv._end_time = machine['_end_time']
 			all_machines.append(rv)
 		return all_machines
+
+	def get_all_users(self) -> list:
+		"""
+		Retrieves all users from the database
+
+		Returns:
+			list: list of all users
+		"""
+		try:
+			collection = self.setup_connection().Users
+			all_users = []
+			for user in collection.find():
+				rv = User(user.get('_user_name', ''),
+					user.get('_user_email', ''),
+					user.get('_phone_carrier', ''),
+					user.get('_notification_preference', ''),
+     				user.get('_user_phone_number', ''),
+					user.get('_is_admin'),
+     				"fakepassword"
+     )
+
+				all_users.append(rv)
+			return all_users
+		except Exception as e:
+			print(f"Error retrieving users: {e}")
+			return []
+
 
 	def find_user_by_id(self, user_id: str) -> User:
 		"""

@@ -197,10 +197,22 @@ header button {
   transition: transform 0.2s;
 }
 
-.admin-titles{
-  margin-left: 5vw;
-  margin-top: 80px;
-  margin-bottom: -50px;
+.spacer{
+  margin: 10px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.admin-titles {
+  margin-top: 80px; /* Keeps the vertical margin as is */
+  margin-bottom: -60px; /* Keeps the bottom margin as is */
+
+  font-family: 'Roboto', sans-serif; /* Set the font to Roboto */
+  font-size: 2rem; /* Adjust font size for a modern feel */
+  font-weight: 700; /* Make the title bold */
+  letter-spacing: 1px; /* Slight letter spacing for readability */
+  color: #333; /* Dark grey for good contrast */
+  text-transform: uppercase; /* Optional: makes the text uppercase for a modern look */
 }
 .machine-tile:hover {
   transform: scale(1.05);

@@ -40,6 +40,7 @@ function Menu() {
             <li><button onClick={() => navigate('/user-preferences')}>Settings</button></ li>
             <li><button onClick={() => navigate('/login')}>Login</button></ li>
             <li><button onClick={handleLogout}>Log out</button></li>
+            <li><button onClick={() => navigate('/create-account')}>Create Account</button></ li>
           </ul>
         </div>
       )}
