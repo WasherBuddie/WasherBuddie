@@ -34,6 +34,7 @@ function HomePage() {
                         id: machine._machine_id,
                         type: machine._machine_type,
                         status: machine._current_state,
+                        user: machine._who_is_using,
                         timeRemaining,
                     };
                 });
@@ -91,7 +92,7 @@ function HomePage() {
                 setMachines((prevMachines) =>
                     prevMachines.map((machine) =>
                         machine.id === machineId
-                            ? { ...machine, status: 'Available', timeRemaining: 0 }
+                            ? { ...machine, status: 'Available', timeRemaining: 0, user: 'None' }
                             : machine
                     )
                 );
@@ -124,7 +125,7 @@ function HomePage() {
                         setMachines((prevMachines) =>
                             prevMachines.map((m) =>
                                 m.id === id
-                                    ? { ...m, status: 'In Use', timeRemaining }
+                                    ? { ...m, status: 'In Use', timeRemaining, user: machine.user }
                                     : m
                             )
                         );
@@ -153,16 +154,17 @@ function HomePage() {
     }
 
     return (
-        <div>
+        <div style={{ paddingTop: "100px" }}>
             <Menu />
             <Header />
             <div className="machine-list">
                 {machines.map((machine) => (
                     <div key={machine.id} className="machine-tile">
                         <h3>
-                            {machine.type} {machine.id}
+                            {machine.type} {machine.id[1]}
                         </h3>
                         <p>Status: {machine.status}</p>
+                        <p>User: {machine.user}</p>
                         <p>Time Remaining: {machine.timeRemaining} mins</p>
                         <button
                             onClick={() => handleStartEndUse(machine.id)}
