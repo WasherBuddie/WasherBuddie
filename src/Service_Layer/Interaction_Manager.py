@@ -302,8 +302,8 @@ class Interaction_Manager:
 	def reset_password(self, user):
 		password = random.randint(100000, 999999)
 		password = str(password)
-		Database_Manager.reset_password(user, password)
 		Notification_Manager().send_password(user, password)
+		self.user_update(user.user_name, 1, password)
 		return True
 
   

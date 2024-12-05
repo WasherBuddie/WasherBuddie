@@ -117,5 +117,5 @@ class Notification_Manager:
     def send_password(self, user:User, password: str):
         from src.Service_Layer.User import User
         from src.Service_Layer.Notification_Sender import Notification_Sender
-        Notification_Sender().reset_password(user, password)
+        Notification_Sender().send_password(user, password)
         return True

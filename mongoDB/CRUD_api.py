@@ -329,10 +329,6 @@ class Database_Manager:
 			return False
 		return True
 
-	def reset_password(self, email, password) -> bool:
-		collection = self.setup_connection().Users
-		collection.update_one({"_email": email}, {"$set": {"_password": password}})
-		return True
 
 	def change_machine_start_time(self, machine_id: int, new_start_time: Union[datetime.datetime, None]) -> bool:
 		"""
@@ -420,7 +416,7 @@ class Database_Manager:
 			return []
 
 
-	def find_user_by_id(self, user_id: str) -> User:
+	def find_user_by_id(self, user_email: str) -> User:
 		"""
 		Finds a user by their ID
 
@@ -431,7 +427,7 @@ class Database_Manager:
 			User: user with the given ID
 		"""
 		collection = self.setup_connection().Users
-		user = collection.find_one({"_id": user_id})
+		user = collection.find_one({"user_email": user_email})
 		return User(user['_user_name'], user['_user_email'], user['_phone_carrier'], user['_notification_preference'], user['_user_phone_number'], user['_is_admin'])
 	def find_user_by_email(self, email):
 		"""
