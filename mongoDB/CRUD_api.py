@@ -316,7 +316,8 @@ class Database_Manager:
 			return False
 		return True
 
-	def change_machine_start_time(self, machine_id: str, new_start_time: Union[datetime.datetime, None]) -> bool:
+
+	def change_machine_start_time(self, machine_id: int, new_start_time: Union[datetime.datetime, None]) -> bool:
 		"""
 		Changes the start time of a machine
 
@@ -383,7 +384,34 @@ class Database_Manager:
 
 		return all_washers + all_dryers
 
-	def find_user_by_id(self, user_id: str) -> User:
+	def get_all_users(self) -> list:
+		"""
+		Retrieves all users from the database
+
+		Returns:
+			list: list of all users
+		"""
+		try:
+			collection = self.setup_connection().Users
+			all_users = []
+			for user in collection.find():
+				rv = User(user.get('_user_name', ''),
+					user.get('_user_email', ''),
+					user.get('_phone_carrier', ''),
+					user.get('_notification_preference', ''),
+     				user.get('_user_phone_number', ''),
+					user.get('_is_admin'),
+     				"fakepassword"
+     )
+
+				all_users.append(rv)
+			return all_users
+		except Exception as e:
+			print(f"Error retrieving users: {e}")
+			return []
+
+
+	def find_user_by_id(self, user_email: str) -> User:
 		"""
 		Finds a user by their ID
 
@@ -394,7 +422,7 @@ class Database_Manager:
 			User: user with the given ID
 		"""
 		collection = self.setup_connection().Users
-		user = collection.find_one({"_id": user_id})
+		user = collection.find_one({"user_email": user_email})
 		return User(user['_user_name'], user['_user_email'], user['_phone_carrier'], user['_notification_preference'], user['_user_phone_number'], user['_is_admin'])
 
 	def find_user_by_email(self, email):

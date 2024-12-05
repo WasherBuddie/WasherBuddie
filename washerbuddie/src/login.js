@@ -21,7 +21,7 @@ function Login() {
                 },
                 body: JSON.stringify({
                     email: email,
-                    password: password,
+                    password: password
                 }),
             });
 
@@ -66,6 +66,7 @@ function Login() {
                             style={{ ...styles.input, borderColor: error ? 'red' : '' }}
                         />
                     </div>
+
                     {error && <p style={styles.error}>{error}</p>}
                     <button type="submit" style={styles.button}>Log In</button>
                 </form>

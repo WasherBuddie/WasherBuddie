@@ -15,6 +15,9 @@ CORS(app)  # Enable CORS for API calls
 # Initialize the interaction manager
 interaction_manager = Interaction_Manager()
 
+
+
+
 # API routes
 @app.route('/update', methods=['POST'])
 def update():
@@ -105,6 +108,17 @@ def get_machines():
         rv.append(machine.__dict__)
     return jsonify({'DB_machines': rv})
 
+
+@app.route('/get_users', methods=['GET'])
+def get_users():
+    rv = []
+    # Get all users
+    for user in Database_Manager().get_all_users():
+            rv.append(user.__dict__)
+    return jsonify({'DB_users': rv})
+
+
+
 @app.route('/send_notification', methods=['POST'])
 def send_notification():
     data = request.json
@@ -164,13 +178,18 @@ def logout():
 @app.route('/get_admin', methods=['GET'])
 def get_admin():
     return jsonify({"admin": session['is_admin']}), 200
-
+    
 @app.route('/reset_password', methods=['GET'])
 def reset_password():
-    data = request.json
-    email = data.get('email')
-    interaction_manager.reset(email)
-    jsonify({'success': True})
+        data = request.json
+        email = data.get('email')
+        user_name = email.split('@')[0]
+        user_data = interaction_manager.get_user(email)
+        user = User(user_data['user_name'],user_data['email'],user_data['phone_carrier'],user_data['notification_preference'],user_data['phone_number'],user_data['is_admin'],"fakepass")
+        interaction_manager.reset_password(user,)
+        return jsonify({"success": True}), 200
+
+
 
 @app.route('/authenticate_log_in', methods=['POST'])
 def authenticate_log_in():
@@ -281,6 +300,18 @@ def notify_user():
         return jsonify({'success': success, 'message': 'Notification sent successfully' if success else 'Failed to send notification'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+
+
+    except Exception as e:
+        # Log the exception and return an error response
+        app.logger.error(f"Error in /tester: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+
+    
 
 # Catch-all route for frontend routes handled by React
 @app.route('/')

@@ -8,7 +8,9 @@ import './App.css';
 function CreateAccount() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [notificationPreference,   setNotificationPreference] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneCarrier, setPhoneCarrier] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -17,10 +19,10 @@ function CreateAccount() {
 
     const userData = {
       user_name: email.split("@")[0], // Using email prefix as username
-      notification_preference: 'Email', // Assuming email notifications by default
+      notification_preference: notificationPreference, // Assuming email notifications by default
       user_phone_number: phone,
       user_email: email,
-      phone_carrier: 'Verizon', // Add logic to capture this if needed
+      phone_carrier: phoneCarrier, // Add logic to capture this if needed
       password: password,
       is_admin: false, // Default to false
     };
@@ -39,8 +41,8 @@ function CreateAccount() {
         toast.success('Account created successfully!', { position: toast.POSITION.TOP_RIGHT });
         navigate('/home-page'); // Redirect on success
       } else {
-        setError(result.error || 'Failed to create account.');
-        toast.error(result.error || 'Failed to create account.', { position: toast.POSITION.TOP_RIGHT });
+        setError(result.error || 'Please check your fields');
+        toast.error(result.error || 'Please check your fields', { position: toast.POSITION.TOP_RIGHT });
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -74,6 +76,38 @@ function CreateAccount() {
               style={styles.input}
             />
           </div>
+          <div style={styles.inputGroup}>
+                        <label style={styles.label}>Phone Carrier</label>
+                        <select
+                            value={phoneCarrier}
+                            onChange={(e) => setPhoneCarrier(e.target.value)} 
+                            required
+                            style={styles.input}
+                        >
+                            <option value="" disabled>Select your carrier</option>
+                            <option value="@mms.att.net">AT&T</option>
+                            <option value="@vzwpix.com">Verizon</option>
+                            <option value="@myboostmobile.com">Boost Mobile</option>
+                            <option value="@mms.mycricket.com">Cricket</option>
+                            <option value="@mymetropcs.com">MetroPCS</option>
+                            <option value="@pm.sprint.com">Sprint</option>
+                            <option value="@tmomail.net">T-Mobile</option>
+                            <option value="@mms.uscc.net">U.S. Cellular</option>
+                        </select>
+                    </div>
+                    <div style={styles.inputGroup}>
+                        <label style={styles.label}>Notification Preference</label>
+                        <select
+                            value={notificationPreference}
+                            onChange={(e) => setNotificationPreference(e.target.value)} 
+                            required
+                            style={styles.input}
+                        >
+                            <option value="" disabled>Select Notification Preference</option>
+                            <option value="Email">Email</option>
+                            <option value="Text">Phone</option>
+                        </select>
+                    </div>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Password</label>
             <input

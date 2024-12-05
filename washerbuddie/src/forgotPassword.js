@@ -8,13 +8,40 @@ function ForgotPassword() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logic to handle the password reset request
-    toast.success('Success!', { position: toast.POSITION.TOP_RIGHT });
-    setTimeout(() => {
-      navigate('/login'); // Redirect to login page after form submission
-    }, 1000); // Delay for toast visibility
+
+    try {
+      // Make a POST request to /reset_password
+      const response = await fetch('/reset_password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({'email': email }),
+      });
+
+      // Check if the response was successful
+      if (response.ok) {
+        toast.success(
+          'If an account with that email exists, you will receive a reset email shortly.',
+          { position: toast.POSITION.TOP_RIGHT }
+        );
+      } else {
+        toast.error('Failed to process your request. Please try again later.', {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+
+      // Redirect after a short delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    } catch (error) {
+      toast.error('An error occurred. Please try again later.', {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
   };
 
   return (

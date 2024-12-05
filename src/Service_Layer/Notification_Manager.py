@@ -112,3 +112,10 @@ class Notification_Manager:
             raise TypeError()
 
         Notification_Sender().send_custom_message(sending_user, receiving_user, message)
+        
+        
+    def send_password(self, user:User, password: str):
+        from src.Service_Layer.User import User
+        from src.Service_Layer.Notification_Sender import Notification_Sender
+        Notification_Sender().send_password(user, password)
+        return True

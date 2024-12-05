@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 import threading
+import random
 import datetime
 import time
 import traceback
@@ -234,9 +235,9 @@ class Interaction_Manager:
 			raise PermissionError()
 
 		machine = Database_Manager().find_machine_by_id(machine_id)
-  
 		machine.current_state = ('return', user)
 		return True
+	
 
 
 	def get_status(self, machine_id: str) -> str:
@@ -283,3 +284,14 @@ class Interaction_Manager:
 
 	def get_user(self, email):
 		return Database_Manager().find_user_by_email(email)
+
+
+
+	def reset_password(self, user):
+		password = random.randint(100000, 999999)
+		password = str(password)
+		Notification_Manager().send_password(user, password)
+		self.user_update(user.user_name, 1, password)
+		return True
+
+  
