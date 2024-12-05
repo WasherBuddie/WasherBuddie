@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Menu from './menu';
 import Header from "./Header";
 
 function UserPreferences() {
@@ -145,6 +146,7 @@ function UserPreferences() {
 
   return (
     <>
+      <Menu />
       <Header />
       <div className="preferences-container">
         <div className="preferences-box">

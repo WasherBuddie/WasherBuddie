@@ -122,7 +122,6 @@ class TestInteractionManager(unittest.TestCase):
         self.assertEqual(mock_machine.current_state, "In Use")
         self.assertEqual(mock_machine.machine_type, 'Washer')
 
-
     def test_create_session_invalid_input(self):
         """Test creating a session with invalid input."""
         with self.assertRaises(TypeError):

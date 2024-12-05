@@ -9,8 +9,6 @@ function HomePage() {
     const [machines, setMachines] = useState([]);
     const navigate = useNavigate();
     const userName = 'test_user'; // Replace with the logged-in user's name
-    const [loading, setLoading] = useState(true);
-
     const fetchMachines = async () => {
         try {
             const response = await fetch('/get_machines');
@@ -48,12 +46,8 @@ function HomePage() {
     };
 
     useEffect(() => {
-        const loadData = async () => {
-            await fetchMachines();
-            setTimeout(() => setLoading(false), 2000); // Wait for 2 seconds
-        };
-        loadData();
-        
+        fetchMachines();
+
         const interval = setInterval(() => {
             setMachines((prevMachines) =>
                 prevMachines.map((machine) => {

@@ -11,6 +11,27 @@ function AdminPage() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    // Check if the user is an admin
+    useEffect(() => {
+        const checkAdminStatus = async () => {
+            try {
+                const response = await fetch('/get_admin');
+                if (!response.ok) {
+                    throw new Error('Failed to check admin status');
+                }
+                const isAdmin = await response.json();
+                if (!isAdmin) {
+                    navigate('/login'); // Redirect to login if not an admin
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                navigate('/login'); // Redirect to login on error
+            }
+        };
+
+        checkAdminStatus();
+    }, [navigate]);
+
     // Fetch machine data
     const fetchMachines = async () => {
         try {
@@ -182,7 +203,7 @@ function AdminPage() {
             <div className="admin-controls">
                 {/* Machines section */}
                 <div className="section">
-                    <h2 className='admin-titles'>Machines</h2>
+                    <h2 className="admin-titles">Machines</h2>
                     <div className="machine-list">
                         {machines.map((machine) => (
                             <div key={machine.id} className="machine-tile">
@@ -211,7 +232,7 @@ function AdminPage() {
 
                 {/* Users section */}
                 <div className="section">
-                    <h2 className='admin-titles'>Users</h2>
+                    <h2 className="admin-titles">Users</h2>
                     <div className="machine-list">
                         {users.map((user) => (
                             <div key={user.id} className="machine-tile">

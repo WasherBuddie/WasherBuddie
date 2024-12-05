@@ -9,6 +9,7 @@ body {
   background-color: #f3f4f6;
   display: flex;
   align-items: center;
+  padding-top: 80px; /* Matches the header height */
   justify-content: center;
   overflow-y: auto; /* Enable vertical scrolling */
   min-height: 100vh;
@@ -175,8 +176,10 @@ header button {
   width: 100vw;
   justify-content: center;
   gap: 1rem;
-  padding: 1rem;
+  margin-top: 100px; /* Adjust to match the header height */
+  box-sizing: border-box; /* Ensures padding doesn't affect layout size */
 }
+
 
 .machine-tile {
   display: flex;
@@ -195,6 +198,8 @@ header button {
 
 .admin-titles{
   margin-left: 5vw;
+  margin-top: 80px;
+  margin-bottom: -50px;
 }
 .machine-tile:hover {
   transform: scale(1.05);

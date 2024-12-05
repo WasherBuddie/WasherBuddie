@@ -164,7 +164,14 @@ def logout():
 @app.route('/get_admin', methods=['GET'])
 def get_admin():
     return jsonify({"admin": session['is_admin']}), 200
-    
+
+@app.route('/reset_password', methods=['GET'])
+def reset_password():
+    data = request.json
+    email = data.get('email')
+    interaction_manager.reset(email)
+    jsonify({'success': True})
+
 @app.route('/authenticate_log_in', methods=['POST'])
 def authenticate_log_in():
     data = request.json

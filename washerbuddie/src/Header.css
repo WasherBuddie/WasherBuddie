@@ -13,6 +13,8 @@
   overflow: hidden; /* Ensure bubbles stay within the header */
 }
 
+
+
 .bubbles {
   position: absolute;
   top: 0;

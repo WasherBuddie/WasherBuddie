@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import './home.css';
+import './Header.css'
 
 function Home() {
   const navigate = useNavigate();
@@ -9,7 +11,7 @@ function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowButton(true);
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -17,9 +19,9 @@ function Home() {
   return (
     <>
       <Header />
-      <div>
-        <h1>Welcome to Washer Buddie</h1>
-        <p>Your one-stop spot for all laundry needs!</p>
+      <div className="home-container">
+        <h1 className='h1'>Welcome to Washer Buddie</h1>
+        <p className='p'>Your one-stop spot for all laundry needs!</p>
         {showButton && (
           <button onClick={() => navigate('/home-page')}>Continue</button>
         )}

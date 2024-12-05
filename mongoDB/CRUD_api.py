@@ -382,7 +382,6 @@ class Database_Manager:
 		all_dryers.sort(key=lambda x: x.machine_id[1])
 
 		return all_washers + all_dryers
-		
 
 	def find_user_by_id(self, user_id: str) -> User:
 		"""
@@ -397,7 +396,7 @@ class Database_Manager:
 		collection = self.setup_connection().Users
 		user = collection.find_one({"_id": user_id})
 		return User(user['_user_name'], user['_user_email'], user['_phone_carrier'], user['_notification_preference'], user['_user_phone_number'], user['_is_admin'])
-	
+
 	def find_user_by_email(self, email):
 		"""
 		Finds a user by their email.

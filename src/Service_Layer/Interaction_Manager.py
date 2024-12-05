@@ -21,7 +21,7 @@ class Interaction_Manager:
 	def add_washer(self) -> bool:
 		"""
 		Adds a new washing machine
-	
+    
 		Returns:
 			boolean: whether or not the washer was added successfully
 		"""
@@ -149,7 +149,6 @@ class Interaction_Manager:
 		"""
 		if not (isinstance(machine_id, str) and isinstance(user, User)):
 			raise TypeError()
-		
 		machine = Database_Manager().find_machine_by_id(machine_id)
 		machine.current_state = ('In Use', user)
   
