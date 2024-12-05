@@ -12,8 +12,8 @@ class TestMachine(unittest.TestCase):
         """Create a Machine instance, admin, and user before each test."""
         self.user = User("Steve Wozniak", "jaydonfaal@gmail.com", "Verizon", "Email", 6269935329, True)
         self.user2 =  User("Steve Faal", "jaydonfaal@gmail.com", "Verizon", "Email", 6269935329, False)
-        self.washer = Machine("Washer", 101)
-        self.dryer = Machine("Dryer", 111)
+        self.washer = Machine("Washer", 'W1')
+        self.dryer = Machine("Dryer", 'D1')
 
 
     def test_initial_state(self):

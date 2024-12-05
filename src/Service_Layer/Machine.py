@@ -80,24 +80,22 @@ class Machine:
 
         if next_state == "Out of Order" and user.is_admin == True:
             self._current_state = "Out of Order"
-            CRUD.change_machine_state(self.machine_id, "Out of Order")
             self._who_is_using = None
             self._start_time = None
             self._end_time = None
             CRUD.change_machine_end_time(self._machine_id, self._end_time)
-            CRUD.change_machine_state(self._machine_id, next_state)
+            CRUD.change_machine_state(self.machine_id, "Out of Order")
             CRUD.change_machine_start_time(self._machine_id, self._start_time)
             CRUD.change_machine_user(self._machine_id, self._who_is_using)
             return
         
         if next_state == "return" and user.is_admin == True and self._current_state == "Out of Order":
             self._current_state = "Available"
-            CRUD.change_machine_state(self.machine_id, "Available")
             self._who_is_using = None
             self._start_time = None
             self._end_time = None
             CRUD.change_machine_end_time(self._machine_id, self._end_time)
-            CRUD.change_machine_state(self._machine_id, self._current_state)
+            CRUD.change_machine_state(self.machine_id, "Available")
             CRUD.change_machine_start_time(self._machine_id, self._start_time)
             CRUD.change_machine_user(self._machine_id, self._who_is_using)
             return
@@ -123,7 +121,6 @@ class Machine:
         elif self._current_state == 'In Use' and next_state == 'Available':
             # Ending cycle
             self._current_state = 'Available'
-            CRUD.change_machine_state(self.machine_id, 'Available')
             self._who_is_using = None  
             self._end_time = None
             self._start_time = None

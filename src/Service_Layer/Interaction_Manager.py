@@ -12,7 +12,8 @@ from src.Service_Layer.User import User
 from src.Service_Layer.Notification_Manager import Notification_Manager
 
 class Interaction_Manager:
-	machine_count = 0
+	washer_count = 0
+	dryer_count = 0
 	Machines = {}
 	Users = {}
 	white_list = []
@@ -20,17 +21,14 @@ class Interaction_Manager:
 	def add_washer(self) -> bool:
 		"""
 		Adds a new washing machine
-		
-		Args:
-			machine_id (int): machine id of the new washer
-
+	
 		Returns:
 			boolean: whether or not the washer was added successfully
 		"""
 		try:
-			washer = Machine('Washer', self.machine_count)
-			self.Machines[self.machine_count] = washer
-			self.machine_count+=1
+			washer = Machine('Washer', 'W' + str(self.washer_count+1))
+			self.Machines[self.washer_count] = washer
+			self.washer_count+=1
 			return True
 		except Exception as e:
 			print(f"Error adding user: {e}")
@@ -40,17 +38,14 @@ class Interaction_Manager:
 	def add_dryer(self) -> bool:
 		"""
 		Adds a new drying machine
-		
-		Args:
-			machine_id (int): machine id of the new dryer
 
 		Returns:
 			boolean: whether or not the dryer was added successfully
 		"""
 		try:
-			dryer = Machine('Dryer', self.machine_count)
-			self.Machines[self.machine_count] = dryer
-			self.machine_count+=1
+			dryer = Machine('Dryer', 'D'+str(self.dryer_count+1))
+			self.Machines[self.dryer_count] = dryer
+			self.dryer_count+=1
 			return True
 		except Exception as e:
 			print(f"Error adding user: {e}")
@@ -137,15 +132,13 @@ class Interaction_Manager:
 			print(f"Error adding user: {e}")
 			print(traceback.format_exc())  # Print the stack trace for debugging
 			return False
-		
-#below needs to be integrated into the class, may keep local vars, my go into the db, then get rid of machine manager      
-	
-	def create_session(self, machine_id: int, user: User) -> bool:
+			
+	def create_session(self, machine_id: str, user: User) -> bool:
 		"""
 		Sets the status for a machine to 'In Use' and associates the user with the machine
 
 		Args:
-			machine_id (int): machine id of the machine being used
+			machine_id (str): machine id of the machine being used
 			user (User): specific user using the machine
 
 		Raises:
@@ -154,10 +147,9 @@ class Interaction_Manager:
 		Returns:
 			None: if the machine is successfully set to 'In Use'
 		"""
-		if not isinstance(machine_id, int) and not isinstance(user, User):
+		if not (isinstance(machine_id, str) and isinstance(user, User)):
 			raise TypeError()
 		
-		# machine = self.Machines[machine_id]
 		machine = Database_Manager().find_machine_by_id(machine_id)
 		machine.current_state = ('In Use', user)
   
@@ -170,7 +162,7 @@ class Interaction_Manager:
 			if time_to_wait > 0:
 				time.sleep(time_to_wait)
 	
-			self.end_session(machine_id, user)
+			self.end_session(machine_id)
 			self.notify_user(machine_id, user)
 
 		thread = threading.Thread(target=monitor_session, daemon=True)
@@ -178,13 +170,12 @@ class Interaction_Manager:
   
 		return True
 		
-	def end_session(self, machine_id: int):
+	def end_session(self, machine_id: str):
 		"""
 		Sets the status for a machine to 'Available' and removes the user from the machine
 
 		Args:
-			machine_id (int): machine the user is using
-			user (User): user using the machine
+			machine_id (str): machine the user is using
    
 		Raises:
 			TypeError: if the parameters are not of type Machine or User
@@ -192,67 +183,69 @@ class Interaction_Manager:
 		Returns:
 			None: if the machine is successfully set to 'Available'
 		"""
-		if not (isinstance(machine_id, int)):
+		if not (isinstance(machine_id, str)):
 			raise TypeError()
 
-		# machine = self.Machines[machine_id]
-		return Database_Manager().change_machine_end_time(machine_id, None)
+		machine = Database_Manager().find_machine_by_id(machine_id)
+
+		machine.current_state = ('Available', None)
+
+		return True
+
 	
-	def set_out_of_order(self, machine_id: int, user: User) -> bool:
+	def set_out_of_order(self, machine_id: str, user: User) -> bool:
 		"""
 		Sets the status of the machine to/from out of order
 
 		Args:
-			machine_id (int): machine to have its status changed
+			machine_id (str): machine to have its status changed
 			user (User): user setting the status of the machine
    
 		Raises:
 			TypeError: if the parameters are not of type Machine or User
 			PermissionError: if the user is not an admin
 		"""
-		if not (isinstance(machine_id, int) and isinstance(user, User)):
+		if not (isinstance(machine_id, str) and isinstance(user, User)):
 			raise TypeError()
 
 		if not user.is_admin:
 			raise PermissionError()
 
-		# machine = self.Machines[machine_id]
 		machine = Database_Manager().find_machine_by_id(machine_id)
   
 		machine.current_state = ('Out of Order', user)
 		return True
 
-	def return_to_service(self, machine_id: int, user: User) -> bool:
+	def return_to_service(self, machine_id: str, user: User) -> bool:
 		"""
 		Sets the status of the machine to/from out of order
 
 		Args:
-			machine_id (int): machine to have its status changed
+			machine_id (str): machine to have its status changed
 			user (User): user setting the status of the machine
    
 		Raises:
 			TypeError: if the parameters are not of type Machine or User
 			PermissionError: if the user is not an admin
 		"""
-		if not (isinstance(machine_id, int) and isinstance(user, User)):
+		if not (isinstance(machine_id, str) and isinstance(user, User)):
 			raise TypeError()
 
 		if not user.is_admin:
 			raise PermissionError()
 
-		# machine = self.Machines[machine_id]
 		machine = Database_Manager().find_machine_by_id(machine_id)
   
 		machine.current_state = ('return', user)
 		return True
 
 
-	def get_status(self, machine_id: int) -> str:
+	def get_status(self, machine_id: str) -> str:
 		"""
 		Returns the current status of the machine
 
 		Args:
-			machine_id (int): machine to get the status of
+			machine_id (str): machine to get the status of
 
 		Returns:
 			str: the current status of the machine
@@ -260,36 +253,32 @@ class Interaction_Manager:
 		Raises:
 			TypeError: if the parameter is not of type Machine
 		"""
-		if not isinstance(machine_id, int):
+		if not isinstance(machine_id, str):
 			raise TypeError()
 
-		# machine = self.Machines[machine_id]
 		machine = Database_Manager().find_machine_by_id(machine_id)
 
 		return machine._current_state
 	
-	def notify_user(self, machine_id: int, user: User) -> bool:
+	def notify_user(self, machine_id: str, user: User) -> bool:
 		"""
 		Notifies the user of the machine's completion
 
 		Args:
-			machine_id (int): machine to notify the user of
+			machine_id (str): machine to notify the user of
 			user (User): user to notify
 
 		Raises:
 			TypeError: if the parameters are not of type Machine or User
 		"""
-		if not (isinstance(machine_id, int) and isinstance(user, User)):
+		if not (isinstance(machine_id, str) and isinstance(user, User)):
 			raise TypeError()
 
-		# machine = self.Machines[machine_id]
 		machine = Database_Manager().find_machine_by_id(machine_id)
 
 		Notification_Manager().send_user_notification(user, machine)
 		return True
-		
 
-	
 	def user_update(self, user_name, code, value):
 		return Database_Manager().user_update(user_name, code, value)		
 

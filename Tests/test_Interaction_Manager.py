@@ -114,12 +114,14 @@ class TestInteractionManager(unittest.TestCase):
     @patch('mongoDB.CRUD_api.Database_Manager.find_machine_by_id')
     def test_create_session(self, mock_find_machine):
         """Test creating a machine session."""
-        mock_machine = Machine('Washer', 0)
+        mock_machine = Machine('Washer', 'W0')
         mock_find_machine.return_value = mock_machine
         
-        result = self.interaction_manager.create_session(0, self.test_user)
+        result = self.interaction_manager.create_session('W0', self.test_user)
         self.assertTrue(result)
         self.assertEqual(mock_machine.current_state, "In Use")
+        self.assertEqual(mock_machine.machine_type, 'Washer')
+
 
     def test_create_session_invalid_input(self):
         """Test creating a session with invalid input."""
@@ -129,10 +131,10 @@ class TestInteractionManager(unittest.TestCase):
     @patch('mongoDB.CRUD_api.Database_Manager.find_machine_by_id')
     def test_get_status(self, mock_find_machine):
         """Test getting machine status."""
-        mock_machine = Machine('Washer', 0)
+        mock_machine = Machine('Washer', 'W0')
         mock_find_machine.return_value = mock_machine
         
-        status = self.interaction_manager.get_status(0)
+        status = self.interaction_manager.get_status('W0')
         self.assertEqual(status, "Available")
 
 if __name__ == '__main__':
