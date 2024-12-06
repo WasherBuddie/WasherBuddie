@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/WasherBuddie/static/css/main.5b0a26bc.css",
+    "main.js": "/WasherBuddie/static/js/main.004c7944.js",
+    "static/js/453.a6747719.chunk.js": "/WasherBuddie/static/js/453.a6747719.chunk.js",
+    "index.html": "/WasherBuddie/index.html",
+    "main.5b0a26bc.css.map": "/WasherBuddie/static/css/main.5b0a26bc.css.map",
+    "main.004c7944.js.map": "/WasherBuddie/static/js/main.004c7944.js.map",
+    "453.a6747719.chunk.js.map": "/WasherBuddie/static/js/453.a6747719.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5b0a26bc.css",
+    "static/js/main.004c7944.js"
+  ]
+}
