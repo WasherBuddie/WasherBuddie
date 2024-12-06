@@ -235,28 +235,39 @@ class Notification_Sender:
 
 	def message_blast(self, users, out):
 		"""
-		Sends a custom message site wide
+		Sends a custom message site-wide to all users.
+
 		Args:
-			msg: sent to all users
+			users: List of User objects to send the message to.
+			out: Message to be sent to all users.
 		"""
 		from src.Service_Layer.User import User
 		for user in users:
 			if not isinstance(user, User):
 				raise TypeError("The 'user' argument must be an instance of User.")
-			if user.notification_preference == 'Text':
-				msg = MIMEText(out)
-				msg['Subject'] = 'WasherBuddie - Message from ' + "Administration"
-				msg['From'] = "Administration"
-				msg['To'] = str(user.user_phone_number) + user.phone_carrier
-			elif user.notification_preference == 'Email':
-				msg = MIMEText(out)
-				msg['Subject'] = 'WasherBuddie - Message from ' + "Administration"
-				msg['From'] = "Administration"
-				msg['To'] = user.user_email
 
-			with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-				smtp.starttls()
-				smtp.login("washerbuddie@gmail.com", self.password)
-				smtp.send_message(msg)
-				smtp.quit()
+			try:
+				# Construct the message
+				msg = MIMEText(out)
+				msg['Subject'] = 'WasherBuddie - Message from Administration'
+				msg['From'] = "washerbuddie@gmail.com"  # Set a valid 'From' address
+
+				if user.notification_preference == 'Text':
+					msg['To'] = str(user.user_phone_number) + user.phone_carrier
+				elif user.notification_preference == 'Email':
+					msg['To'] = user.user_email
+				else:
+					raise ValueError(f"Unknown notification preference for user: {user}")
+
+				# Send the message
+				with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+					smtp.starttls()
+					smtp.login("washerbuddie@gmail.com", self.password)
+					smtp.send_message(msg)  # No need to explicitly call smtp.quit()
+
+			except smtplib.SMTPException as e:
+				# Log or handle the exception
+				print(f"Error sending message to {user.user_email if user.notification_preference == 'Email' else user.user_phone_number}: {e}")
+				continue  # Continue with the next user in case of error
+
 		return True

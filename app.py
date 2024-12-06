@@ -61,13 +61,29 @@ def remove_user():
 def message_blast():
     data = request.json
     msg = data.get('msg')
+
+    # Check if the user is an admin
+    if not (session.get('is_admin') or data.get('is_admin')):
+        return jsonify({'success': False, 'error': 'Unauthorized access. Admin privileges required.'}), 401
+
     try:
-        if (session.get('is_admin') == True):
-            users = Database_Manager().get_all_users()
-            success = Notification_Sender().message_blast(users, msg)
-            return jsonify({'success': success}),200
+        # Retrieve all users
+        users = Database_Manager().get_all_users()
+
+        # Validate users
+        if not all(isinstance(user, User) for user in users):
+            return jsonify({'success': False, 'error': 'Invalid user data detected.'}), 400
+
+        # Send message blast
+        success = Notification_Sender().message_blast(users, msg)
+
+        # Convert users to dictionaries for JSON response
+        users_dict = [user.to_dict() for user in users]
+        return jsonify({'success': success, 'users': users_dict}), 200
+
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 
 @app.route('/update', methods=['POST'])

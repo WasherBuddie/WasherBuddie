@@ -208,3 +208,15 @@ class User:
 			raise TypeError("Password must be a string")
 		
 		self._password = password
+  
+  
+	def to_dict(self):
+		"""Converts the User object to a dictionary."""
+		return {
+            "user_name": self._user_name,
+            "user_email": self._user_email,
+            "phone_carrier": self._phone_carrier,
+            "notification_preference": self._notification_preference,
+            "user_phone_number": self._user_phone_number,
+            "is_admin": self._is_admin
+        }

@@ -320,7 +320,7 @@ function AdminPage() {
                                 </div>
                             ))
                         ) : (
-                            <p>Loading.</p> // Show this if no users are present
+                            <p>Loading...</p> // Show this if no users are present
                         )}
                     </div>
                 </div>
