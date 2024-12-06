@@ -12,9 +12,9 @@ class TestNotificationManager(unittest.TestCase):
         self.manager = Notification_Manager()
         self.admin_user = User("Jaydon Faal", "jaydonfaal@gmail.com", "Verizon", "Email", 6269935329, True)
         self.non_admin_user = User("Steve Faal", "jaydonfaal@gmail.com", "Verizon", "Email", 6269935329,False)
-        self.user1 = User("James Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
-        self.user2 = User("William Faal", "jaydonfaal@gmail.com", "Verizon", "Text", 6269935329, False)
-        self.machine = Machine('Dryer', 101)
+        self.user1 = User("James Faal", "jaydonfaal@gmail.com", "T-Mobile", "Text", 9093309194, False)
+        self.user2 = User("William Faal", "jaydonfaal@gmail.com", "T-Mobile", "Text", 9093309194, False)
+        self.machine = Machine('Dryer', 1)
         self.notifier = Notification_Sender()
 
 

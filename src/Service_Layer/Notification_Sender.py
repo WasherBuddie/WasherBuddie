@@ -63,7 +63,7 @@ class Notification_Sender:
 		msg = MIMEText(Notification().get_text_notification(machineType=machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Finished'
 		msg['From'] = 'WasherBuddie'
-		msg['To'] = str(user.user_phone_number) + user.phone_carrier
+		msg['To'] = str(user.user_phone_number) + self.mobile_carriers[user.phone_carrier]
 
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
@@ -121,7 +121,7 @@ class Notification_Sender:
 		msg = MIMEText(Notification().get_follow_up_text_notification(machineType=machine.machine_type))
 		msg['Subject'] = 'WasherBuddie - Your Laundry Cycle Has Been Stagnant'
 		msg['From'] = 'WasherBuddie'
-		msg['To'] = str(user.user_phone_number) + user.phone_carrier
+		msg['To'] = str(user.user_phone_number) + self.mobile_carriers[user.phone_carrier]
   
 		with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
 			smtp.starttls()
@@ -179,7 +179,7 @@ class Notification_Sender:
 			msg = MIMEText(message)
 			msg['Subject'] = 'WasherBuddie - Message from ' + sending_user.user_name
 			msg['From'] = sending_user.user_name
-			msg['To'] = str(receiving_user.user_phone_number) + receiving_user.phone_carrier
+			msg['To'] = str(receiving_user.user_phone_number) + self.mobile_carriers[receiving_user.phone_carrier]
 		elif receiving_user.notification_preference == 'Email':
 			msg = MIMEText(message)
 			msg['Subject'] = 'WasherBuddie - Message from ' + sending_user.user_name
@@ -213,7 +213,7 @@ class Notification_Sender:
 			msg = MIMEText(f"Your temporary password is {password}. Please log in and update your password as soon as possible.")
 			msg['Subject'] = 'WasherBuddie - Message from system'
 			msg['From'] = 'System'
-			msg['To'] = str(user.user_phone_number) + user.phone_carrier
+			msg['To'] = str(user.user_phone_number) + self.mobile_carriers[user.phone_carrier]
 
 		elif user.notification_preference == 'Email':
 			msg = MIMEText(f"Your temporary password is {password}. Please log in and update your password as soon as possible.")
