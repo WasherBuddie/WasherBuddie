@@ -305,6 +305,6 @@ class Interaction_Manager:
 		return True
 
 
-	def message_blast(self, msg):
-		users = Database_Manager().get_all_users()
-		Notification_Sender().message_blast(users, msg)
+	# def message_blast(self, msg):
+	# 	users = Database_Manager().get_all_users()
+	# 	Notification_Sender().message_blast(users, msg)

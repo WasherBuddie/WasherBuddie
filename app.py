@@ -217,7 +217,13 @@ def send_notification():
         return jsonify({'success': False, 'error': str(e)})
 
 
-
+@app.route('/remove_machine', methods=['DELETE'])
+def remove_machine():
+    data = request.json
+    machine_id = data.get('machine_id')
+    if session.get('is_admin') == True:
+        Database_Manager().remove_machine_by_id(machine_id)
+    return jsonify({"message": "Logged out successfully!"}), 200
 
 
 @app.route('/logout', methods=['POST'])

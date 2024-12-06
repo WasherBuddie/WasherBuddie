@@ -192,23 +192,21 @@ function AdminPage() {
     const handleDeleteMachine = async (id) => {
         try {
             const response = await fetch('/remove_machine', {
-                method: 'POST',
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ machine_id: id }),
             });
             if (response.ok) {
-                setMachines((prevMachines) =>
-                    prevMachines.map((m) =>
-                        m.id === id ? { ...m, status: 'Available' } : m
-                    )
-                );
+                // Refetch the machines after deletion
+                fetchMachines();
             } else {
                 console.error('Failed to remove machine');
             }
         } catch (error) {
-            console.error('Error removing machine to service:', error);
+            console.error('Error removing machine:', error);
         }
     };
+    
 
     return (
         <div>

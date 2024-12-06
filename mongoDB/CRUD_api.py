@@ -475,6 +475,26 @@ class Database_Manager:
 			return None
 		return User(user['_user_name'], user['_user_email'], user['_phone_carrier'], user['_notification_preference'], user['_user_phone_number'], user['_is_admin'])
 
+
+	def remove_machine_by_id(self, machine_id: int) -> bool:
+		"""
+		Removes a machine by its ID
+
+		Args:
+			machine_id (int): ID of the machine to be removed
+
+		Returns:
+			bool: True if the machine was removed, False otherwise
+		"""
+		collection = self.setup_connection().Machines
+		result = collection.delete_one({"_machine_id": machine_id})
+		
+		if result.deleted_count == 1:
+			return True  # Machine removed successfully
+		else:
+			return False  # No machine found with the given ID or some error occurred
+
+
 # ----------------------------------------
 
 # Testing
