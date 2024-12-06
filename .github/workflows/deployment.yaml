@@ -1,38 +1,36 @@
-name: Deploy React Frontend to GitHub Pages
+name: Deploy React App to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v3
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
     
-    - name: Install gh-pages
-      working-directory: ./washerbuddie
-      run: npm install -g gh-pages
+    - name: Build Docker Image
+      run: docker build -t washerbuddie .
+    
+    - name: Extract Build Artifacts
+      run: |
+        mkdir -p ./deploy-build
+        docker create --name extract washerbuddie
+        docker cp extract:/app/washerbuddie/build ./deploy-build
+        docker rm extract
 
-    - name: Install Dependencies
-      working-directory: ./washerbuddie
-      run: npm install
-    
-    - name: Build React App
-      working-directory: ./washerbuddie
-      run: npm run build
+    - name: Create 404.html
+      run: |
+        cp ./deploy-build/build/index.html ./deploy-build/build/404.html
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./washerbuddie/build
+        publish_dir: ./deploy-build/build
         force_orphan: true

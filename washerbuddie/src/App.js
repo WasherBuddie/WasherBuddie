@@ -13,7 +13,7 @@ import Admin from './Admin';
 
 function App() {
   return (
-    <Router basename="/Washerbuddie">
+    <Router basename="/WasherBuddie">
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
