@@ -7,7 +7,7 @@ import './App.css';
 
 function HomePage() {
     const [machines, setMachines] = useState([]);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const userName = 'test_user'; // Replace with the logged-in user's name
     const [loading, setLoading] = useState(true);
     const fetchMachines = async () => {
