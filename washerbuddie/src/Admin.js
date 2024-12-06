@@ -131,10 +131,10 @@ function AdminPage() {
     // Delete user account
     const handleDeleteUser = async (id) => {
         try {
-            const response = await fetch('/delete_user', {
-                method: 'POST',
+            const response = await fetch('/remove_user', {
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: id }),
+                body: JSON.stringify({ user_name: id }),
             });
             if (response.ok) {
                 setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
@@ -149,10 +149,10 @@ function AdminPage() {
     // Promote user to admin
     const handlePromoteUser = async (id) => {
         try {
-            const response = await fetch('/promote_user', {
+            const response = await fetch('/promote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: id }),
+                body: JSON.stringify({ user_name: id }),
             });
             if (response.ok) {
                 setUsers((prevUsers) =>
@@ -172,10 +172,10 @@ function AdminPage() {
     const handleSendMessage = async () => {
         if (message.trim()) {
             try {
-                const response = await fetch('/send_message', {
+                const response = await fetch('/message_blast', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({msg: message }),
                 });
                 if (response.ok) {
                     alert('Message sent successfully!');
@@ -189,13 +189,26 @@ function AdminPage() {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="loading-screen">
-                <h2>Page is loading...</h2>
-            </div>
-        );
-    }
+    const handleDeleteMachine = async (id) => {
+        try {
+            const response = await fetch('/remove_machine', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ machine_id: id }),
+            });
+            if (response.ok) {
+                setMachines((prevMachines) =>
+                    prevMachines.map((m) =>
+                        m.id === id ? { ...m, status: 'Available' } : m
+                    )
+                );
+            } else {
+                console.error('Failed to remove machine');
+            }
+        } catch (error) {
+            console.error('Error removing machine to service:', error);
+        }
+    };
 
     return (
         <div>
@@ -204,32 +217,81 @@ function AdminPage() {
             <div className="admin-controls">
                 {/* Machines section */}
                 <h2 className="admin-titles">Machines</h2>
-                <div className="section">
-                    <div className="machine-list">
-                        {machines.map((machine) => (
-                            <div key={machine.id} className="machine-tile">
-                                <h3>
-                                    {machine.type} {machine.id}
-                                </h3>
-                                <p>Status: {machine.status}</p>
-                                <button
-                                    onClick={
-                                        machine.status === 'Out of Order'
-                                            ? () => handleReturnToService(machine.id)
-                                            : () => handleSetOutOfOrder(machine.id)
-                                    }
-                                    style={{
-                                        backgroundColor: machine.status === 'Out of Order' ? '#007bff' : '#ff0000',
-                                        color: '#fff',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    {machine.status === 'Out of Order' ? 'Return to Service' : 'Set Out of Order'}
-                                </button>
+                <div className="machine-actions">
+  <button
+    className="machine-link"
+    onClick={async () => {
+      try {
+        const response = await fetch('/add_washer', { method: 'POST' });
+        if (response.ok) {
+          alert('Washer added successfully!');
+          fetchMachines(); // Refresh machine list
+        } else {
+          throw new Error('Failed to add washer');
+        }
+      } catch (error) {
+        console.error('Error adding washer:', error);
+      }
+    }}
+  >
+    Washer <span className="plus-icon">+</span>
+  </button>
+  <button
+    className="machine-link"
+    onClick={async () => {
+      try {
+        const response = await fetch('/add_dryer', { method: 'POST' });
+        if (response.ok) {
+          alert('Dryer added successfully!');
+          fetchMachines(); // Refresh machine list
+        } else {
+          throw new Error('Failed to add dryer');
+        }
+      } catch (error) {
+        console.error('Error adding dryer:', error);
+      }
+    }}
+  >
+    Dryer <span className="plus-icon">+</span>
+  </button>
+</div>
+
+<div className="section">
+                            <div className="machine-list">
+                                {machines.map((machine) => (
+                                    <div key={machine.id} className="machine-tile">
+                                        <h3>
+                                            {machine.type} {machine.id}
+                                        </h3>
+                                        <p>Status: {machine.status}</p>
+                                        <button
+                                            onClick={
+                                                machine.status === 'Out of Order'
+                                                    ? () => handleReturnToService(machine.id)
+                                                    : () => handleSetOutOfOrder(machine.id)
+                                            }
+                                            style={{
+                                                backgroundColor: machine.status === 'Out of Order' ? '#007bff' : '#ff0000',
+                                                color: '#fff',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            {machine.status === 'Out of Order' ? 'Return to Service' : 'Set Out of Order'}
+                                        </button>
+                                        <button className='spacer'
+                                            onClick={() => handleDeleteMachine(machine.id)}
+                                            style={{
+                                                backgroundColor: '#ff0000',
+                                                color: '#fff',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            Delete Machine
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </div>
 
                 {/* Users section */}
                 <h2 className="admin-titles">Users</h2>
@@ -260,7 +322,7 @@ function AdminPage() {
                                 </div>
                             ))
                         ) : (
-                            <p>No users available.</p> // Show this if no users are present
+                            <p>Loading.</p> // Show this if no users are present
                         )}
                     </div>
                 </div>

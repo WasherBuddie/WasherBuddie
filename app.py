@@ -1,5 +1,6 @@
 from flask import Flask, session, request, jsonify, send_from_directory
 from src.Service_Layer.Interaction_Manager import Interaction_Manager
+from src.Service_Layer.Notification_Sender import Notification_Sender
 from mongoDB.CRUD_api import Database_Manager
 import bcrypt
 from src.Service_Layer.User import User
@@ -17,13 +18,63 @@ interaction_manager = Interaction_Manager()
 
 
 
-
 # API routes
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    data = request.json
+    user_name = data.get('user_name')
+    notification_preference = data.get('notification_preference')
+    user_phone_number = int(data.get('user_phone_number'))
+    user_email = data.get('user_email')
+    phone_carrier = data.get('phone_carrier')
+    is_admin = data.get('is_admin', False)  # Default to False if is_admin is not provided
+    password = data.get('password')
+
+    if not user_name:
+        return jsonify({'success': False, 'error': 'No username was provided'}), 400
+    
+    if len(user_email) <= 0 or '@' not in user_email or '.' not in user_email:
+        return jsonify({'success': False, 'error': 'Invalid email address'}), 400
+
+    try:
+        success = interaction_manager.add_user(user_name, notification_preference, user_phone_number, user_email, phone_carrier, is_admin, password)
+        return jsonify({'success': success, 'message': 'User added successfully' if success else 'Failed to add user'})
+    except Exception as e:
+        print(f"Error adding user: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+
+@app.route('/remove_user', methods=['DELETE'])
+def remove_user():
+    data = request.json
+    user_name = data.get('user_name')   
+    try:
+        if(session.get('is_admin') == True):
+            success = Database_Manager().delete_single_user(user_name)
+        return jsonify({'success': success, 'message': 'User removed successfully' if success else 'Failed to remove user'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/message_blast', methods=['POST'])
+def message_blast():
+    data = request.json
+    msg = data.get('msg')
+    try:
+        if (session.get('is_admin') == True):
+            users = Database_Manager().get_all_users()
+            success = Notification_Sender().message_blast(users, msg)
+            return jsonify({'success': success}),200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 @app.route('/update', methods=['POST'])
 def update():
     try:
         data = request.json
-        user_name = session.get('user_name') or data.get('user_name')
+        user_name = session.get('user_name')
         code = data.get("code")
         value = data.get("value")
 
@@ -43,6 +94,29 @@ def update():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+
+@app.route('/promote', methods=['POST'])
+def promote():
+    try:
+        data = request.json
+        user_name = data.get('user_name')
+        code = 4
+        value = True
+
+        if not user_name or code is None or not value:
+            return jsonify({"success": False, "error": "Invalid input"}), 400
+
+        # Perform the update
+        result = interaction_manager.user_update(user_name, code, value)
+
+        # Check if the update was successful
+        if result:
+            return jsonify({"success": True, "message": "Update successful"}), 200
+        else:
+            return jsonify({"success": False, "error": "Update failed"}), 500
+    except Exception as e:
+        app.logger.error(f"Error in update endpoint: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 
@@ -92,7 +166,8 @@ def get_user_by_email():
 @app.route('/add_washer', methods=['POST'])
 def add_washer():
     try:
-        success = interaction_manager.add_washer()
+        if session.get('is_admin') == True:
+            success = interaction_manager.add_washer()
         return jsonify({'success': success, 'message': 'Washer added successfully' if success else 'Failed to add washer'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -100,7 +175,8 @@ def add_washer():
 @app.route('/add_dryer', methods=['POST'])
 def add_dryer():
     try:
-        success = interaction_manager.add_dryer()
+        if session.get('is_admin') == True:
+            success = interaction_manager.add_dryer()
         return jsonify({'success': success, 'message': 'Dryer added successfully' if success else 'Failed to add dryer'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -119,6 +195,7 @@ def get_users():
     rv = []
     # Get all users
     for user in Database_Manager().get_all_users():
+        if user.user_name != session.get('user_name'):
             rv.append(user.__dict__)
     return jsonify({'DB_users': rv})
 
@@ -139,40 +216,9 @@ def send_notification():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-@app.route('/add_user', methods=['POST'])
-def add_user():
-    data = request.json
-    user_name = data.get('user_name')
-    notification_preference = data.get('notification_preference')
-    user_phone_number = int(data.get('user_phone_number'))
-    user_email = data.get('user_email')
-    phone_carrier = data.get('phone_carrier')
-    is_admin = data.get('is_admin', False)  # Default to False if is_admin is not provided
-    password = data.get('password', 'defaultpassword123')
 
-    if not user_name:
-        return jsonify({'success': False, 'error': 'No username was provided'}), 400
-    
-    if len(user_email) <= 0 or '@' not in user_email or '.' not in user_email:
-        return jsonify({'success': False, 'error': 'Invalid email address'}), 400
 
-    try:
-        success = interaction_manager.add_user(user_name, notification_preference, user_phone_number, user_email, phone_carrier, is_admin, password)
-        return jsonify({'success': success, 'message': 'User added successfully' if success else 'Failed to add user'})
-    except Exception as e:
-        print(f"Error adding user: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/remove_user', methods=['DELETE'])
-def remove_user():
-    data = request.json
-    user_name = data.get('user_name')
-    
-    try:
-        success = interaction_manager.remove_user(user_name)
-        return jsonify({'success': success, 'message': 'User removed successfully' if success else 'Failed to remove user'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -182,7 +228,7 @@ def logout():
 
 @app.route('/get_admin', methods=['GET'])
 def get_admin():
-    return jsonify({"admin": session['is_admin']}), 200
+    return jsonify({"admin": session.get('is_admin')}), 200
     
 @app.route('/reset_password', methods=['POST'])
 def reset_password():
@@ -214,7 +260,7 @@ def create_session():
     machine_id = data.get('machine_id')
     user_name = session['user_name']
     
-    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in [user.user_name for user in Database_Manager().get_valid_users()]:
+    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in [user.user_name for user in get_valid_user()]:
         return jsonify({'success': False, 'error': 'Machine or User not found'}), 404
 
     user = Database_Manager().get_specific_user(user_name)
@@ -229,15 +275,13 @@ def create_session():
 def end_session():
     data = request.json
     machine_id = data.get('machine_id')
-    user_name = data.get('user_name')
 
-    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in [user.user_name for user in Database_Manager().get_valid_users()]:
+    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()]:
         return jsonify({'success': False, 'error': 'Machine or User not found'}), 404
 
-    user = Database_Manager().get_specific_user(user_name)
     
     try:
-        success = interaction_manager.end_session(machine_id, user)
+        success = interaction_manager.end_session(machine_id)
         return jsonify({'success': success, 'message': 'Session ended successfully' if success else 'Failed to end session'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -246,9 +290,9 @@ def end_session():
 def set_out_of_order():
     data = request.json
     machine_id = data.get('machine_id')
-    user_name = session['user_name']
+    user_name = session.get('user_name')
 
-    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in [user.user_name for user in Database_Manager().get_valid_users()]:
+    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in  get_valid_user():
         return jsonify({'success': False, 'error': 'Machine or User not found'}), 404
 
     user = Database_Manager().get_specific_user(user_name)
@@ -265,7 +309,7 @@ def return_to_service():
     machine_id = data.get('machine_id')
     user_name = session['user_name']
 
-    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in [user.user_name for user in Database_Manager().get_valid_users()]:
+    if machine_id not in [machine.machine_id for machine in Database_Manager().get_all_machines()] or user_name not in  get_valid_user():
         return jsonify({'success': False, 'error': 'Machine or User not found'}), 404
 
     user = Database_Manager().get_specific_user(user_name)
@@ -310,14 +354,12 @@ def notify_user():
         return jsonify({'success': False, 'error': str(e)})
 
 
-
-
-    except Exception as e:
-        # Log the exception and return an error response
-        app.logger.error(f"Error in /tester: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
+def get_valid_user():
+    valid = []
+    for x in Database_Manager().get_all_users():
+        if x.is_admin == True:
+            valid.append(x.user_name)
+    return valid
 
     
 

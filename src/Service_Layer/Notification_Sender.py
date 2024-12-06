@@ -229,3 +229,34 @@ class Notification_Sender:
 		except smtplib.SMTPException as e:
 			# Handle/log the error
 			print(f"Error sending email: {e}")
+
+
+
+
+	def message_blast(self, users, out):
+		"""
+		Sends a custom message site wide
+		Args:
+			msg: sent to all users
+		"""
+		from src.Service_Layer.User import User
+		for user in users:
+			if not isinstance(user, User):
+				raise TypeError("The 'user' argument must be an instance of User.")
+			if user.notification_preference == 'Text':
+				msg = MIMEText(out)
+				msg['Subject'] = 'WasherBuddie - Message from ' + "Administration"
+				msg['From'] = "Administration"
+				msg['To'] = str(user.user_phone_number) + user.phone_carrier
+			elif user.notification_preference == 'Email':
+				msg = MIMEText(out)
+				msg['Subject'] = 'WasherBuddie - Message from ' + "Administration"
+				msg['From'] = "Administration"
+				msg['To'] = user.user_email
+
+			with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+				smtp.starttls()
+				smtp.login("washerbuddie@gmail.com", self.password)
+				smtp.send_message(msg)
+				smtp.quit()
+		return True

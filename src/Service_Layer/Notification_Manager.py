@@ -119,3 +119,7 @@ class Notification_Manager:
         from src.Service_Layer.Notification_Sender import Notification_Sender
         Notification_Sender().send_password(user, password)
         return True
+    
+    def message_blast(self, users, msg):
+        Notification_Sender().send_password(users, msg)
+        return True

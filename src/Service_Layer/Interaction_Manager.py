@@ -171,7 +171,7 @@ class Interaction_Manager:
 			if time_to_wait > 0:
 				time.sleep(time_to_wait)
 	
-			self.end_session(machine_id, user)
+			self.end_session(machine_id)
 			self.notify_user(machine_id, user)
 
 		thread = threading.Thread(target=monitor_session, daemon=True)
@@ -193,8 +193,6 @@ class Interaction_Manager:
 		Returns:
 			None: if the machine is successfully set to 'Available'
 		"""
-		if not (isinstance(machine_id, int)):
-			raise TypeError()
 
 		# machine = self.Machines[machine_id]
 		return Database_Manager().change_machine_end_time(machine_id, None)
@@ -306,4 +304,7 @@ class Interaction_Manager:
 		self.user_update(user.user_name, 1, password)
 		return True
 
-  
+
+	def message_blast(self, msg):
+		users = Database_Manager().get_all_users()
+		Notification_Sender().message_blast(users, msg)

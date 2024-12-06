@@ -173,7 +173,7 @@ class Database_Manager:
 		deleted_count = collection.delete_many({"_user_name": {"$in": [user.user_name for user in users]}}).deleted_count
 		return deleted_count
 
-	def get_valid_users(self) -> list:
+	def get_users(self) -> list:
 		"""
 		Retrieves all valid users from the database
 
@@ -186,26 +186,6 @@ class Database_Manager:
 			valid_users.append(User(user['_user_name'], user['_user_email'], user['_phone_carrier'], user['_notification_preference'], user['_user_phone_number'], user['_is_admin']))
 		return valid_users
 
-	def update_user(self, old_user: User, new_user: User):
-		"""
-		Updates a single user in the database
-
-		Args:
-			old_user (User): user to be updated
-			new_user (User): user to be updated to
-
-		Raises:
-			TypeError: if user is not an instance of the User class
-
-		Returns:
-			str: modified_count of the field
-		"""
-		if not isinstance(old_user, User) and isinstance(new_user, User):
-			raise TypeError("Input must be an instance of the User class")
-	
-		collection = self.setup_connection().Users
-		collection.find_one_and_replace({"_user_name": old_user.user_name}, new_user.__dict__)
-  
 
 
 	def user_update(self, user_name, code, value):
@@ -223,7 +203,7 @@ class Database_Manager:
 		Returns:
 			bool: True if the update was successful, False otherwise.
 		"""
-		if not isinstance(user_name, str) or not isinstance(code, int) or not isinstance(value, str):
+		if not isinstance(user_name, str) or not isinstance(code, int) or not isinstance(value, (str,bool)):
 			raise TypeError("Invalid input types. Expected str for user_name and value, int for code.")
 
 		# Map codes to the corresponding fields
@@ -231,12 +211,13 @@ class Database_Manager:
 			0: "_user_email",
 			1: "_password",
 			2: "_user_phone_number",
-			3: "_notification_preference"
+			3: "_notification_preference",
+			4: "_is_admin"
 		}
 
 		# Validate the code
 		if code not in field_mapping:
-			raise ValueError("Invalid code. Must be one of 0, 1, 2, or 3.")
+			raise ValueError("Invalid code. Must be one of 0, 1, 2, 3, or 4.")
 
 		# Get the field to update
 		field_to_update = field_mapping[code]
@@ -253,10 +234,6 @@ class Database_Manager:
 		except Exception as e:
 			print(f"Error updating user: {e}")
 			return False
-
-
-
-
 
 
 	
@@ -305,8 +282,6 @@ class Database_Manager:
 			return False
 		return True
 
-		# Check if the update was successful
-		return update_result.modified_count > 0
 
 
 	def change_machine_user(self, machine_id: int, new_user: Union[str, None]) -> bool:
@@ -400,20 +375,17 @@ class Database_Manager:
 			collection = self.setup_connection().Users
 			all_users = []
 			for user in collection.find():
-				rv = User(user.get('_user_name', ''),
-					user.get('_user_email', ''),
-					user.get('_phone_carrier', ''),
-					user.get('_notification_preference', ''),
-     				user.get('_user_phone_number', ''),
-					user.get('_is_admin'),
-     				"fakepassword"
-     )
-
+				rv = User(user['_user_name'],
+					user['_user_email'],
+					user['_phone_carrier'],
+					user['_notification_preference'],
+     				user['_user_phone_number'],
+					user['_is_admin'])
 				all_users.append(rv)
 			return all_users
 		except Exception as e:
 			print(f"Error retrieving users: {e}")
-			return []
+			return all_users
 
 
 	def find_user_by_id(self, user_email: str) -> User:
