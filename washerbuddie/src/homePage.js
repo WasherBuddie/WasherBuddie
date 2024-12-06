@@ -20,7 +20,7 @@ function HomePage() {
 
             if (Array.isArray(data.DB_machines)) {
                 const machineArray = data.DB_machines.map((machine) => {
-                    const startTime = new Date(machine._start_time);
+                    // const startTime = new Date(machine._start_time);
                     const endTime = new Date(machine._end_time);
                     const now = new Date();
 
@@ -138,10 +138,6 @@ function HomePage() {
                 endSession(id);
             }
         }
-    };
-
-    const handleLogout = () => {
-        navigate('/login');
     };
 
     if (loading) {

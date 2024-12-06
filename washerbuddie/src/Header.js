@@ -6,9 +6,9 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  // const toggleMenu = () => {
+  //   setIsOpen(!isOpen);
+  // };
 
   // Function to handle redirection
   const redirectToHome = () => {
