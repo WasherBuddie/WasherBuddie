@@ -1,5 +1,22 @@
 # ignore the Notification_Sender class
 .vscode/
 __pycache__/
-Notification_Sender.py
 .env
+
+# Node
+node_modules/
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
