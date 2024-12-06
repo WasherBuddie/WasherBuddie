@@ -8,7 +8,7 @@ from flask_cors import CORS
 import secrets
 
 # Initialize Flask app
-app = Flask(__name__, static_folder="washerbuddie/build", static_url_path="")
+app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 CORS(app, resources={r"/api/*": {"origins": "*"}})  # Enable CORS for API calls
 
