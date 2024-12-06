@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './Header';
 import './App.css';
+import { API_BASE_URL } from './config';
 
 function CreateAccount() {
   const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ function CreateAccount() {
     };
 
     try {
-      const response = await fetch('/add_user', {
+      const response = await fetch(`${API_BASE_URL}/api/add_user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

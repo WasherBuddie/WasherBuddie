@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './Header';
+import { API_BASE_URL } from './config';
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ function ForgotPassword() {
 
     try {
       // Make a POST request to /reset_password
-      const response = await fetch('/reset_password', {
+      const response = await fetch(`${API_BASE_URL}/api/reset_password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

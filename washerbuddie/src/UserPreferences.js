@@ -4,6 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Menu from './menu';
 import Header from "./Header";
+import { API_BASE_URL } from './config';
 
 function UserPreferences() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ function UserPreferences() {
   useEffect(() => {
     const fetchAdminStatus = async () => {
       try {
-        const response = await fetch("/get_admin");
+        const response = await fetch(`${API_BASE_URL}/api/get_admin`);
         const data = await response.json();
         if (response.ok) {
           setIsAdmin(data.admin);
@@ -41,7 +42,7 @@ function UserPreferences() {
       return;
     }
     try {
-      const response = await fetch("/update", {
+      const response = await fetch(`${API_BASE_URL}/api/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +68,7 @@ function UserPreferences() {
       return;
     }
     try {
-      const response = await fetch("/update", {
+      const response = await fetch(`${API_BASE_URL}/api/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +94,7 @@ function UserPreferences() {
       return;
     }
     try {
-      const response = await fetch("/update", {
+      const response = await fetch(`${API_BASE_URL}/api/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +116,7 @@ function UserPreferences() {
   const handleNotificationUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/update", {
+      const response = await fetch(`${API_BASE_URL}/api/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

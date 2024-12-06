@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Header from './Header';
 import Menu from './menu';
 import './App.css';
+import { API_BASE_URL } from './config';
 
 function HomePage() {
     const [machines, setMachines] = useState([]);
@@ -12,7 +13,7 @@ function HomePage() {
     const [loading, setLoading] = useState(true);
     const fetchMachines = async () => {
         try {
-            const response = await fetch('/get_machines');
+            const response = await fetch(`${API_BASE_URL}/api/get_machines`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -76,7 +77,7 @@ function HomePage() {
 
     const endSession = async (machineId) => {
         try {
-            const response = await fetch('/end_session', {
+            const response = await fetch(`${API_BASE_URL}/api/end_session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -109,7 +110,7 @@ function HomePage() {
         if (machine) {
             if (machine.status === 'Available') {
                 try {
-                    const response = await fetch('/create_session', {
+                    const response = await fetch(`${API_BASE_URL}/api/create_session`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

@@ -10,13 +10,14 @@ import secrets
 # Initialize Flask app
 app = Flask(__name__, static_folder="washerbuddie/build", static_url_path="")
 app.secret_key = secrets.token_hex(16)
-CORS(app)  # Enable CORS for API calls
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Enable CORS for API calls
+
+# Configure allowed origins in production
+if os.environ.get('FLASK_ENV') == 'production':
+    CORS(app, resources={r"/api/*": {"origins": ["https://washerbuddie.github.io"]}})
 
 # Initialize the interaction manager
 interaction_manager = Interaction_Manager()
-
-
-
 
 # API routes
 @app.route('/update', methods=['POST'])

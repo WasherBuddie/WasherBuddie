@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './menu.css';
+import { API_BASE_URL } from './config';
 
 function Menu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +15,7 @@ function Menu() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/logout', { method: 'POST' });
+      const response = await fetch(`${API_BASE_URL}/api/logout`, { method: 'POST' });
   
       if (response.ok) {
         toast.success('Logged out successfully!');

@@ -24,6 +24,12 @@ jobs:
         docker cp extract:/app/washerbuddie/build ./deploy-build
         docker rm extract
 
+    - name: Build
+      working-directory: ./washerbuddie
+      env:
+        REACT_APP_API_URL: https://washerbuddie.onrender.com
+      run: npm run build
+
     - name: Create 404.html
       run: |
         cp ./deploy-build/build/index.html ./deploy-build/build/404.html

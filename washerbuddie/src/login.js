@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './Header';
+import { API_BASE_URL } from './config';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ function Login() {
         e.preventDefault();
 
         try {
-            const response = await fetch('/authenticate', {
+            const response = await fetch(`${API_BASE_URL}/api/authenticate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

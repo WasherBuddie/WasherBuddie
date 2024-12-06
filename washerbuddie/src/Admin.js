@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Menu from './menu';
 import './App.css';
+import { API_BASE_URL } from './config';
 
 function AdminPage() {
     const [machines, setMachines] = useState([]);
@@ -15,7 +16,7 @@ function AdminPage() {
     useEffect(() => {
         const checkAdminStatus = async () => {
             try {
-                const response = await fetch('/get_admin');
+                const response = await fetch(`${API_BASE_URL}/api/get_admin`);
                 if (!response.ok) {
                     throw new Error('Failed to check admin status');
                 }
@@ -35,7 +36,7 @@ function AdminPage() {
     // Fetch machine data
     const fetchMachines = async () => {
         try {
-            const response = await fetch('/get_machines');
+            const response = await fetch(`${API_BASE_URL}/api/get_machines`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch machines: ${response.statusText}`);
             }
@@ -56,7 +57,7 @@ function AdminPage() {
     // Fetch user data
     const fetchUsers = async () => {
         try {
-            const response = await fetch('/get_users');
+            const response = await fetch(`${API_BASE_URL}/api/get_users`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch users: ${response.statusText}`);
             }
@@ -87,7 +88,7 @@ function AdminPage() {
     // Set machine out of order
     const handleSetOutOfOrder = async (id) => {
         try {
-            const response = await fetch('/set_out_of_order', {
+            const response = await fetch(`${API_BASE_URL}/api/set_out_of_order`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ machine_id: id }),
@@ -109,7 +110,7 @@ function AdminPage() {
     // Return machine to service
     const handleReturnToService = async (id) => {
         try {
-            const response = await fetch('/return_to_service', {
+            const response = await fetch(`${API_BASE_URL}/api/return_to_service`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ machine_id: id }),
@@ -131,7 +132,7 @@ function AdminPage() {
     // Delete user account
     const handleDeleteUser = async (id) => {
         try {
-            const response = await fetch('/delete_user', {
+            const response = await fetch(`${API_BASE_URL}/api/delete_user`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: id }),
@@ -149,7 +150,7 @@ function AdminPage() {
     // Promote user to admin
     const handlePromoteUser = async (id) => {
         try {
-            const response = await fetch('/promote_user', {
+            const response = await fetch(`${API_BASE_URL}/api/promote_user`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: id }),
@@ -172,7 +173,7 @@ function AdminPage() {
     const handleSendMessage = async () => {
         if (message.trim()) {
             try {
-                const response = await fetch('/send_message', {
+                const response = await fetch(`${API_BASE_URL}/api/send_message`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message }),
