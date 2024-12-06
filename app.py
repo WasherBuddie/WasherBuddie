@@ -10,11 +10,11 @@ import secrets
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # Enable CORS for API calls
+CORS(app, resources={r"/": {"origins": "*"}})  # Enable CORS for API calls
 
 # Configure allowed origins in production
 if os.environ.get('FLASK_ENV') == 'production':
-    CORS(app, resources={r"/api/*": {"origins": ["https://washerbuddie.github.io"]}})
+    CORS(app, resources={r"/": {"origins": "*"}})
 
 # Initialize the interaction manager
 interaction_manager = Interaction_Manager()
