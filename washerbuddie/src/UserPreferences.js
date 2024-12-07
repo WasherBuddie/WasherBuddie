@@ -12,7 +12,7 @@ function UserPreferences() {
   const [rePassword, setRePassword] = useState("");
   const [phone, setPhone] = useState("");
   const [rePhone, setRePhone] = useState("");
-  const [notification, setNotification] = useState("email");
+  const [notification, setNotification] = useState("Email");
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
@@ -231,8 +231,7 @@ function UserPreferences() {
                 onChange={(e) => setNotification(e.target.value)}
               >
                 <option value="Email">Email</option>
-                <option value="Phone">Phone</option>
-                <option value="off">Off</option>
+                <option value="Text">Phone</option>
               </select>
             </label>
             <button type="submit">Update Notification Settings</button>

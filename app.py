@@ -258,7 +258,7 @@ def reset_password():
         email = data.get('email')
         user_name = email.split('@')[0]
         user_data = interaction_manager.get_user(email)
-        user = User(user_data['user_name'],user_data['email'],user_data['phone_carrier'],user_data['notification_preference'],user_data['phone_number'],user_data['is_admin'],"fakepass")
+        user = User(user_data['user_name'],user_data['email'],user_data['phone_carrier'],user_data['notification_preference'],user_data['phone_number'],user_data['is_admin'])
         interaction_manager.reset_password(user,)
         return jsonify({"success": True}), 200
 
