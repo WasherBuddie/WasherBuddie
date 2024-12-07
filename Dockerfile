@@ -3,29 +3,32 @@ FROM python:3.12-slim AS backend
 
 WORKDIR /app
 
-# Copy requirements first
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy backend requirements and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend files
-COPY app.py .
-COPY conftest.py .
-COPY render.yaml .
-COPY docker-compose.yml .
+# Copy all backend files
+COPY . .
 
 # Frontend Stage
 FROM node:16-alpine AS frontend
 
-# Set working directory
 WORKDIR /app
 
 # Copy the entire washerbuddie directory
-COPY washerbuddie/ ./
+COPY washerbuddie/ .
 
-# Install dependencies from the correct location
-RUN npm install
+# Clear any existing node_modules and build directories
+RUN rm -rf node_modules build
 
-# Build the React application
+# Install dependencies and build
+RUN npm install --legacy-peer-deps
 RUN npm run build
 
 # Final Stage
@@ -36,18 +39,19 @@ WORKDIR /app
 # Copy backend files
 COPY --from=backend /app /app
 
-# Copy frontend build to a directory Flask can serve
-COPY --from=frontend /app/build ./static
+# Ensure static directory exists
+RUN mkdir -p static
 
-# Install Python dependencies again in final stage
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy frontend build to static directory
+COPY --from=frontend /app/build/ ./static/
 
 # Environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5000
+ENV PORT=10000
+ENV NODE_ENV=production
 
-EXPOSE 5000
+EXPOSE 10000
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+# Start the application with gunicorn
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
