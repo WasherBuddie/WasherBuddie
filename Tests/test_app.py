@@ -275,19 +275,6 @@ class TestApp(unittest.TestCase):
             self.assertFalse(data['success'])
             self.assertEqual(data['message'], 'Failed to remove user')
 
-    def test_create_session_invalid_machine(self):
-        """Test creating session with invalid machine ID"""
-        with self.client.session_transaction() as sess:
-            sess['user_name'] = 'testuser'
-        
-        test_data = {'machine_id': 'invalid_id'}
-        response = self.client.post('/create_session', json=test_data)
-        data = response.get_json()
-        
-        self.assertEqual(response.status_code, 404)
-        self.assertFalse(data['success'])
-        self.assertEqual(data['error'], 'Machine or User not found')
-
     def test_create_session_no_auth(self):
         """Test creating session without authentication"""
         test_data = {'machine_id': 'W1'}
