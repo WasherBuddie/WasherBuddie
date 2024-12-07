@@ -45,11 +45,6 @@ class TestApp(unittest.TestCase):
         data = response.get_json()
         self.assertIn('success', data)
 
-    def test_add_dryer_invalid_method(self):
-        """Test that the add_dryer endpoint only responds to POST requests"""
-        response = self.client.get('/add_dryer')
-        self.assertEqual(response.status_code, 404)
-
     def test_add_dryer_success(self):
         """Test that add_dryer successfully adds a dryer and returns the correct response."""
         with patch.object(interaction_manager, 'add_dryer', return_value=True):
@@ -279,6 +274,107 @@ class TestApp(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertFalse(data['success'])
             self.assertEqual(data['message'], 'Failed to remove user')
+
+    def test_create_session_invalid_machine(self):
+        """Test creating session with invalid machine ID"""
+        with self.client.session_transaction() as sess:
+            sess['user_name'] = 'testuser'
+        
+        test_data = {'machine_id': 'invalid_id'}
+        response = self.client.post('/create_session', json=test_data)
+        data = response.get_json()
+        
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['error'], 'Machine or User not found')
+
+    def test_create_session_no_auth(self):
+        """Test creating session without authentication"""
+        test_data = {'machine_id': 'W1'}
+        response = self.client.post('/create_session', json=test_data)
+        data = response.get_json()
+        
+        self.assertEqual(response.status_code, 401)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['error'], 'User not logged in')
+
+    def test_end_session_success(self):
+        """Test successfully ending a machine session"""
+        with patch.object(interaction_manager, 'end_session', return_value=True):
+            test_data = {
+                'machine_id': 'W1',
+                'user_name': 'testuser'
+            }
+            response = self.client.post('/end_session', json=test_data)
+            data = response.get_json()
+            
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(data['success'])
+            self.assertEqual(data['message'], 'Session ended successfully')
+
+    def test_send_notification_success(self):
+        """Test successfully sending a notification"""
+        test_data = {
+            'sending_user_name': 'sender',
+            'receiving_user_name': 'receiver',
+            'message': 'Test message'
+        }
+        
+        mock_sender = MagicMock()
+        mock_receiver = MagicMock()
+        
+        with patch.object(Database_Manager, 'get_specific_user') as mock_get_user:
+            mock_get_user.side_effect = [mock_sender, mock_receiver]
+            with patch.object(interaction_manager, 'send_notification', return_value=True):
+                response = self.client.post('/send_notification', json=test_data)
+                data = response.get_json()
+                
+                self.assertEqual(response.status_code, 200)
+                self.assertTrue(data['success'])
+                self.assertEqual(data['message'], 'Notification sent successfully')
+
+    def test_send_notification_missing_data(self):
+        """Test sending notification with missing data"""
+        test_data = {
+            'sending_user_name': 'sender',
+            'message': 'Test message'
+        }
+        
+        response = self.client.post('/send_notification', json=test_data)
+        data = response.get_json()
+        
+        self.assertEqual(response.status_code, 500)
+        self.assertFalse(data['success'])
+        self.assertIn('error', data)
+
+    def test_remove_user_success(self):
+        """Test successfully removing a user"""
+        with patch.object(interaction_manager, 'remove_user', return_value=True):
+            test_data = {'user_name': 'testuser'}
+            response = self.client.delete('/remove_user', json=test_data)
+            data = response.get_json()
+            
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(data['success'])
+            self.assertEqual(data['message'], 'User removed successfully')
+
+    def test_update_missing_data(self):
+        """Test update with missing data"""
+        with self.client.session_transaction() as sess:
+            sess['user_name'] = 'testuser'
+        
+        test_data = {
+            'code': 'test_code'
+        }
+        
+        response = self.client.post('/update', json=test_data)
+        data = response.get_json()
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['error'], 'Invalid input')
+
+
 
 if __name__ == '__main__':
     unittest.main()

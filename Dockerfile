@@ -16,7 +16,6 @@ COPY wsgi.py .
 COPY conftest.py .
 COPY setup.py .
 COPY pyproject.toml .
-COPY render.yaml .
 COPY docker-compose.yml .
 
 # Copy directories
