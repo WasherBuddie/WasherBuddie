@@ -1,6 +1,5 @@
 # WasherBuddie
 
-Here’s a formatted and clearer version of the user manual:
 
 ---
 
@@ -51,4 +50,3 @@ Here’s a formatted and clearer version of the user manual:
 
 ---
 
-This revised version should be easier to follow, with each section clearly defined for quick reference.
