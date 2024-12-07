@@ -12,6 +12,9 @@ WasherBuddie is a smart laundry management system that helps users track their l
 
 ### **Admin User Manual for Laundry System**
 
+Test Admin Credentials: test@gmail.com, password
+
+
 #### **Admin Credentials and Login**
 - Use the provided starter **admin credentials** to log in. Once logged in, click the **menu button** and navigate to **User Preferences** to change your password, email, and other personal settings.
 
@@ -145,3 +148,15 @@ Include:
    - Text
 3. Ensure your contact information is correct
 4. Save your changes
+
+
+
+
+Deployed to: https://washerbuddie-0a7c43415271.herokuapp.com/
+I think Heroku is going to charge me so I might take it down from the link.
+
+Github: https://github.com/WasherBuddie/WasherBuddie
+
+Known Bugs: If user has text as preferred method, sometimes messages don't go through. Specifically Tmobile as carrier, it stops working intermittently with just an email saying the persons number doesnt exist. Which it does...
+
+Runs on local host with docker well.
